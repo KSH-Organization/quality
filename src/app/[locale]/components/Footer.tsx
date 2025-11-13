@@ -1,19 +1,29 @@
+"use client";
+
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function Footer() {
+  const t = useTranslations("footer");
+  const locale = useLocale();
+  const isRTL = locale === "ar";
+
   return (
     <footer className="bg-purple-700 text-white py-12 px-6">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-start">
-        
+      <div
+        className={`max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-start${
+          isRTL ? " rtl" : ""
+        }`}
+      >
         {/* Logo + Copy + Socials */}
         <div>
           <div className="bg-white p-2 rounded-lg inline-block mb-6">
             <img src="/q.png" alt="Logo" className="h-16" />
           </div>
-          <p className="text-sm mb-1">&copy; 2025 Quality</p>
-          <p className="text-sm mb-6">All rights reserved</p>
+          <p className="text-sm mb-1">{t("copyright")}</p>
+          <p className="text-sm mb-6">{t("rights")}</p>
 
           {/* Social Icons */}
           <div className="flex space-x-4">
@@ -39,32 +49,42 @@ export default function Footer() {
         </div>
 
         {/* Company Links */}
-        <div>
-          <h3 className="font-semibold text-lg mb-4">Company</h3>
+        <div className={isRTL ? "text-right" : ""}>
+          <h3 className="font-semibold text-lg mb-4">{t("company")}</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="/about" className="hover:underline">About us</a>
+              <a href="/about" className="hover:underline">
+                {t("about")}
+              </a>
             </li>
             <li>
-              <a href="/people" className="hover:underline">People</a>
+              <a href="/people" className="hover:underline">
+                {t("people")}
+              </a>
             </li>
             <li>
-              <a href="/contact" className="hover:underline">Contact us</a>
+              <a href="/contact" className="hover:underline">
+                {t("contact")}
+              </a>
             </li>
           </ul>
         </div>
 
         {/* Contact Form */}
-        <div>
-          <h3 className="font-semibold text-lg mb-4">Contact Us</h3>
+        <div className={isRTL ? "text-right" : ""}>
+          <h3 className="font-semibold text-lg mb-4">{t("contactTitle")}</h3>
           <form className="relative">
             <textarea
-              placeholder="Your Message"
-              className="w-full h-28 bg-white/20 rounded-lg p-3 pr-10 text-white placeholder-white/70 focus:outline-none resize-none"
+              placeholder={t("messagePlaceholder")}
+              className={`w-full h-28 bg-white/20 rounded-lg p-3 text-white placeholder-white/70 focus:outline-none resize-none${
+                isRTL ? " text-right pr-10 pl-3" : " pr-10"
+              }`}
             />
             <button
               type="submit"
-              className="absolute bottom-3 right-3 text-white hover:opacity-80"
+              className={`absolute bottom-3 text-white hover:opacity-80${
+                isRTL ? " left-3" : " right-3"
+              }`}
             >
               <IoSend size={20} />
             </button>

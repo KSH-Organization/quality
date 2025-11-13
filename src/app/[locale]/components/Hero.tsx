@@ -12,11 +12,11 @@ export default function Hero({ imageUrl = "/hero.png" }: HeroProps) {
 
   return (
     <section
-      className="relative h-[500px] md:h-[650px] bg-white bg-cover bg-center rounded-b-[80px] flex items-center justify-center"
+      className="relative h-[500px] md:h-[650px] bg-cover bg-center rounded-b-[80px] flex items-center justify-center"
       style={{ backgroundImage: `url(${imageUrl})` }}
     >
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/40 rounded-b-[80px]" />
+      {/* <div className="absolute inset-0 bg-black/40 rounded-b-[80px]" /> */}
 
       {/* Title */}
       <div className="relative z-10">

@@ -10,7 +10,9 @@ export default function Home() {
   return (
     <main className="flex flex-col">
       <Navbar />
-      <Hero imageUrl="/home-hero.png" />
+      <div className="bg-[#F2E7BF]">
+        <Hero imageUrl="/home-hero.png" />
+      </div>
       <About />
       <Clients />
       <Different />
