@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main className="flex flex-col">
       <Navbar />
-      <Hero />
+      <Hero imageUrl="/home-hero.png" />
       <About />
       <Clients />
       <Different />
