@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "people": "People",
+    "contact": "Contact Us"
+  },
+  "hero": {
+    "title": "KSHC Logistic"
+  },
+  "footer": {
+    "company": "Company",
+    "about": "About us",
+    "people": "People",
+    "contact": "Contact us"
+  }
+}

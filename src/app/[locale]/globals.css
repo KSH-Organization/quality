@@ -24,3 +24,8 @@ body {
   color: var(--foreground);
   font-family: karma, "Geist Mono", monospace;
 }
+
+body.rtl {
+  direction: rtl;
+  text-align: right;
+}
