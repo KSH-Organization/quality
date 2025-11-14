@@ -25,5 +25,41 @@
   "clients": {
     "ourClients": "Our Clients",
     "strategicPartners": "Strategic Partners"
+  },
+  "services": {
+    "title": "Our Services",
+    "exploreButton": "Explore Service",
+    "purchasing": {
+      "title": "Purchasing and Contracting",
+      "desc": "We ensure the timely and cost-effective provision of our clients' needs by contracting with suppliers and agents both locally and internationally, ensuring all requirements are met efficiently and effectively."
+    },
+    "shipping": {
+      "title": "Shipping,Transportation, and Customs Clearance",
+      "desc": "We rely on a fleet of vehicles that provides full logistical support and door-to-door delivery services. Additionally, we offer cargo tracking services and simplify all customs clearance procedures to ensure timely delivery of goods."
+    },
+    "storage": {
+      "title": "Storage",
+      "desc": "We provide suitable storage environments for various types of goods, offering a wide range of space options and different storage solutions. We utilize the latest systems and global quality standards, with 24-hour monitoring and fire suppression systems to ensure both the safety of the goods and the protection of our workforce."
+    },
+    "logistics": {
+      "title": "Integrated Logistics Solutions",
+      "desc": "We offer a variety of integrated logistics solutions tailored to meet your unique needs, whether under your direct management or through our management on your behalf, we are here to provide solutions tailored to your specific requirements."
+    },
+    "archiving": {
+      "title": "Electronic Archiving",
+      "desc": "Q Company is a leading provider of electronic archiving solutions and digital document management services. The company offers comprehensive services aimed at digitizing and securely archiving documents."
+    },
+    "quality": {
+      "title": "Quality",
+      "desc": "At Quality Company, we consider quality to be our identity and our motto. We ensure global quality standards in all our services, with a strong focus on customer needs and satisfaction to guarantee complete client satisfaction."
+    }
+  },
+  "different": {
+    "titlePart1": "What Makes Us ",
+    "titlePart2": "Different",
+    "titlePart3": "?",
+    "title": "What Makes Us Different?",
+    "description": "At Q Supply Chain, we provide integrated solutions powered by the latest technologies, ensuring enhanced efficiency and minimizing errors through our advanced electronic system. We offer cutting-edge tools, equipment, and a highly qualified team to deliver top-tier services.\nOur focus is on maximizing shareholder value by leveraging our deep understanding of the fastest-growing global markets. We also possess high-value assets through our companies and investment partners in emerging markets.\nWe are committed to sustainability in all our operations and prioritize supporting small industries by providing dedicated warehouses and facilities that cater to their needs, helping them grow and thrive sustainably.\nAt Q Supply Chain, security and safety are our top priorities. Our warehouse is equipped with the latest surveillance cameras and sensors for comprehensive monitoring. Entrances are managed through an advanced access control system, with each entry point being screened by X-ray machines. We are committed to providing a safe working environment for all employees and workers, ensuring their personal safety and enhancing storage security",
+    "button": "About Us"
   }
 }

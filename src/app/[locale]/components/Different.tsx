@@ -1,55 +1,82 @@
+"use client";
+
+import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Different() {
+  const t = useTranslations("different");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
+
   return (
-    <section className="bg-white py-20 px-6">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <section className="bg-[#F2E7BF] py-20 px-6">
+      <div className="max-w-[1440px] mx-auto px-36 flex justify-between items-center">
+        {/* Image Section - Left in Arabic, Right in English */}
+        {isRtl && (
+          <div className="flex justify-center">
+            <Image
+              src="/different.png"
+              alt={t("title")}
+              width={449}
+              height={449}
+              className="w-96 h-96 object-contain"
+            />
+          </div>
+        )}
+
         {/* Text Section */}
-        <div>
-          <h2 className="text-4xl font-bold mb-6">
-            <span className="text-purple-700">What Makes Us </span>
-            <span className="text-yellow-500">Different</span>
-            <span className="text-purple-700">?</span>
-          </h2>
+        <div
+          className={`w-[661px] inline-flex flex-col justify-start items-start gap-8 ${
+            isRtl ? "text-right" : "text-left"
+          }`}
+        >
+          <div className="w-[601px] flex flex-col justify-start items-start gap-4">
+            {/* Title */}
+            <h2 className={`self-stretch ${isRtl ? "justify-start" : ""}`}>
+              <span className="text-[#5F349C] text-4xl font-semibold leading-10">
+                {t("titlePart1")}
+              </span>
+              <span className="text-yellow-600 text-4xl font-semibold leading-10">
+                {t("titlePart2")}
+              </span>
+              <span className="text-[#5F349C] text-4xl font-semibold leading-10">
+                {t("titlePart3")}
+              </span>
+            </h2>
 
-          <p className="text-gray-600 mb-4">
-            At Q Supply Chain, we provide integrated solutions powered by the
-            latest technologies, ensuring enhanced efficiency and minimizing
-            errors through our advanced electronic system. We offer cutting-edge
-            tools, equipment, and a highly qualified team to deliver top-tier
-            services.
-          </p>
-
-          <p className="text-gray-600 mb-4">
-            Our focus is on maximizing shareholder value by leveraging our deep
-            understanding of the fastest-growing global markets. We also possess
-            high-value assets through our companies and investment partners in
-            emerging markets.
-          </p>
-
-          <p className="text-gray-600 mb-8">
-            We are committed to sustainability in all our operations and
-            prioritize supporting small industries by providing dedicated
-            warehouses and facilities that cater to their needs, helping them
-            grow and thrive sustainably.
-          </p>
+            {/* Description */}
+            <div
+              className={`self-stretch ${
+                isRtl ? "justify-start" : ""
+              } text-neutral-500 text-lg font-normal leading-5 whitespace-pre-line`}
+            >
+              {t("description")}
+            </div>
+          </div>
 
           {/* Button */}
-          <Link href="/about">
-            <button className="bg-purple-700 text-white px-6 py-3 rounded-md hover:bg-purple-800 transition-colors">
-              About Us
+          <Link href={`/${locale}/about`}>
+            <button className="px-8 py-3.5 bg-[#5F349C] rounded inline-flex justify-center items-center gap-2.5 hover:bg-[#4a2879] transition-colors">
+              <span className="text-center text-white text-base font-medium leading-6">
+                {t("button")}
+              </span>
             </button>
           </Link>
         </div>
 
-        {/* Image Section */}
-        <div className="flex justify-center">
-          <img
-            src="/different.png" // ضع الصورة في public/different.png
-            alt="What makes us different illustration"
-            className="w-[400px] h-auto"
-          />
-        </div>
+        {/* Image Section - Right in English */}
+        {!isRtl && (
+          <div className="flex justify-center">
+            <Image
+              src="/different.png"
+              alt={t("title")}
+              width={449}
+              height={449}
+              className="w-96 h-96 object-contain"
+            />
+          </div>
+        )}
       </div>
     </section>
   );

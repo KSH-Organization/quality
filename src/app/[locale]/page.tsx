@@ -15,8 +15,8 @@ export default function Home() {
       </div>
       <About />
       <Clients />
-      <Different />
       <Services />
+      <Different />
       <Footer />
     </main>
   );
