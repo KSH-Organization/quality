@@ -46,16 +46,12 @@ export default function PeoplePage() {
           </h2>
 
           {/* First Row - 4 cards */}
-          <div className="flex justify-center gap-8 mb-8">
+          <div dir="ltr" className="flex justify-center gap-8 mb-8">
             {departmentsRow1.map((dept) => (
               <div key={dept} className="w-80 h-80 relative">
                 <div className="w-80 h-80 absolute bg-white rounded-[10px] outline outline-1 outline-neutral-400" />
                 <div className="w-80 h-44 absolute bg-zinc-300 rounded-tl-[10px] rounded-tr-[10px]" />
-                <div
-                  className={`w-72 absolute left-[13px] top-[209px] text-neutral-700 text-xl font-bold leading-5 ${
-                    isRtl ? "text-right" : "text-left"
-                  }`}
-                >
+                <div className="w-72 absolute left-[13px] top-[209px] text-center text-neutral-700 text-xl font-bold leading-5">
                   {t(`departments.${dept}`)}
                 </div>
               </div>
@@ -63,16 +59,12 @@ export default function PeoplePage() {
           </div>
 
           {/* Second Row - 3 cards */}
-          <div className="flex justify-center gap-8">
+          <div dir="ltr" className="flex justify-center gap-8">
             {departmentsRow2.map((dept) => (
               <div key={dept} className="w-80 h-80 relative">
                 <div className="w-80 h-80 absolute bg-white rounded-[10px] outline outline-1 outline-neutral-400" />
                 <div className="w-80 h-44 absolute bg-zinc-300 rounded-tl-[10px] rounded-tr-[10px]" />
-                <div
-                  className={`w-72 absolute left-[13px] top-[209px] text-neutral-700 text-xl font-bold leading-5 ${
-                    isRtl ? "text-right" : "text-left"
-                  }`}
-                >
+                <div className="w-72 absolute left-[13px] top-[209px] text-center text-neutral-700 text-xl font-bold leading-5">
                   {t(`departments.${dept}`)}
                 </div>
               </div>
