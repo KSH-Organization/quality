@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Image from "next/image";
+import Hero from "../components/Hero";
 
 export default function PeoplePage() {
   const t = useTranslations("peoplePage");
@@ -24,19 +24,7 @@ export default function PeoplePage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative h-96 flex items-center justify-center">
-        <Image
-          src="/home-hero.png"
-          alt="Hero"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/40" />
-        <h1 className="relative text-white text-6xl font-bold text-center">
-          <span className="text-[#F2E7BF]">KSHC</span> Logistic
-        </h1>
-      </section>
+      <Hero imageUrl="/people-hero.png" />
 
       {/* Departments Section */}
       <section className="py-20 px-6">

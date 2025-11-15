@@ -122,5 +122,15 @@
       "planning": "Planning & Analysis Department.",
       "quality": "Quality Assurance & Safety Department."
     }
+  },
+  "contactPage": {
+    "title": "We'd Love to Hear From You",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "phone": "Phone Number (optional)",
+      "message": "Your message",
+      "submit": "Send message"
+    }
   }
 }
