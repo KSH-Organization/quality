@@ -1,9 +1,16 @@
+"use client";
+
 import Image from "next/image";
+import { useTranslations, useLocale } from "next-intl";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 
 export default function About() {
+  const t = useTranslations("aboutPage");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
+
   return (
     <main className="flex flex-col">
       {/* Header */}
@@ -14,160 +21,414 @@ export default function About() {
 
       {/* About Section */}
       <section className="bg-white">
-        <div className="max-w-7xl mx-auto flex justify-center">
-          <div className="grid md:grid-cols-2 gap-12 py-20 px-6 items-center max-w-5xl">
-            <div>
-              <h2 className="text-4xl font-bold text-purple-700 mb-6">
-                About Us
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                Q Supply Chain is an investment of the Kuwait-Sudan Holding
-                Company, established to be the trusted provider of premium
-                logistics solutions in Sudan. We are the only company offering
-                comprehensive services in supply chains with high
-                professionalism and advanced technology, backed by the largest
-                and most advanced storage facilities in the country.
-              </p>
-              <p className="text-gray-600 mt-4 leading-relaxed">
-                With over 20,000 square meters of storage space and stacking
-                heights exceeding 17 meters, we offer flexible and innovative
-                solutions that cater to every type of product in varying sizes,
-                weights, and lengths.
-              </p>
+        <div className="self-stretch rounded-bl-[50px] rounded-br-[50px] flex flex-col justify-center items-center">
+          <div className="max-w-[1600px] w-full px-24 py-24 bg-white flex justify-between items-center gap-24">
+            <div
+              className={`flex-1 flex flex-col justify-start items-start gap-8 ${
+                isRtl ? "order-2" : "order-1"
+              }`}
+            >
+              <div className="self-stretch flex flex-col justify-start items-start gap-4">
+                <div
+                  className={`self-stretch ${
+                    isRtl ? "text-right" : ""
+                  } justify-start text-[#5F349C] text-4xl font-semibold leading-[76px]`}
+                >
+                  {t("title")}
+                </div>
+                <div
+                  className={`self-stretch ${
+                    isRtl ? "text-right" : ""
+                  } justify-start text-neutral-500 text-lg font-normal leading-5 whitespace-pre-line`}
+                >
+                  {t("description")}
+                </div>
+              </div>
             </div>
             <Image
-              src="/Illustration.png"
-              alt="About illustration"
-              width={400}
-              height={300}
-              className="rounded-lg shadow-lg"
+              src="/about_us.png"
+              alt={t("title")}
+              width={334}
+              height={257}
+              className={`w-80 h-64 relative rounded-tr-3xl rounded-bl-3xl ${
+                isRtl ? "order-1" : "order-2"
+              }`}
             />
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div className="flex justify-center items-center py-12">
+          <div
+            className={`w-[1000px] h-44 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border-2 border-[#BC940F] inline-flex justify-center items-center gap-12 ${
+              isRtl ? "flex-row-reverse" : ""
+            }`}
+          >
+            {/* Storage Space */}
+            <div className="w-72 h-24 p-3.5 bg-white rounded-2xl inline-flex flex-col justify-center items-start gap-2.5">
+              <div
+                className={`flex-1 inline-flex justify-start items-center gap-2.5 ${
+                  isRtl ? "flex-row-reverse" : ""
+                }`}
+              >
+                {!isRtl && (
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-[#C4A748] opacity-20 rounded-full absolute" />
+                    <div className="w-10 h-10 bg-[#CCB664] opacity-[0.21] rounded-full absolute" />
+                    <Image
+                      src="/house.png"
+                      alt="Storage"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                )}
+                <div
+                  className={`inline-flex flex-col justify-center items-start gap-2 ${
+                    isRtl ? "items-end" : ""
+                  }`}
+                >
+                  <div
+                    className={`justify-start text-[#BC940F] text-base font-semibold capitalize [text-shadow:_0px_2px_2px_rgb(0_0_0_/_0.25)] ${
+                      isRtl ? "text-right" : ""
+                    }`}
+                  >
+                    {t("stats.storageSpace")}
+                  </div>
+                  <div
+                    className={`justify-start text-[#BC940F] text-[22px] font-bold font-['Roboto_Condensed'] capitalize ${
+                      isRtl ? "text-right" : ""
+                    }`}
+                  >
+                    {t("stats.storageValue")}
+                  </div>
+                </div>
+                {isRtl && (
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-[#C4A748] opacity-20 rounded-full absolute" />
+                    <div className="w-10 h-10 bg-[#CCB664] opacity-[0.21] rounded-full absolute" />
+                    <Image
+                      src="/house.png"
+                      alt="Storage"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Height */}
+            <div className="w-72 h-24 p-3.5 bg-white rounded-2xl inline-flex flex-col justify-center items-start gap-2.5">
+              <div
+                className={`flex-1 inline-flex justify-start items-center gap-2.5 ${
+                  isRtl ? "flex-row-reverse" : ""
+                }`}
+              >
+                {!isRtl && (
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-[#C4A748] opacity-20 rounded-full absolute" />
+                    <div className="w-10 h-10 bg-[#CCB664] opacity-[0.21] rounded-full absolute" />
+                    <Image
+                      src="/ruler.png"
+                      alt="Height"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                )}
+                <div
+                  className={`inline-flex flex-col justify-center items-start gap-2 ${
+                    isRtl ? "items-end" : ""
+                  }`}
+                >
+                  <div
+                    className={`justify-start text-[#BC940F] text-base font-semibold capitalize [text-shadow:_0px_2px_2px_rgb(0_0_0_/_0.25)] ${
+                      isRtl ? "text-right" : ""
+                    }`}
+                  >
+                    {t("stats.height")}
+                  </div>
+                  <div
+                    className={`justify-start text-[#BC940F] text-[22px] font-bold font-['Roboto_Condensed'] capitalize ${
+                      isRtl ? "text-right" : ""
+                    }`}
+                  >
+                    {t("stats.heightValue")}
+                  </div>
+                </div>
+                {isRtl && (
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-[#C4A748] opacity-20 rounded-full absolute" />
+                    <div className="w-10 h-10 bg-[#CCB664] opacity-[0.21] rounded-full absolute" />
+                    <Image
+                      src="/ruler.png"
+                      alt="Height"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Years of Experience */}
+            <div className="w-72 h-24 p-3.5 bg-white rounded-2xl inline-flex flex-col justify-center items-start gap-2.5">
+              <div
+                className={`flex-1 inline-flex justify-start items-center gap-2.5 ${
+                  isRtl ? "flex-row-reverse" : ""
+                }`}
+              >
+                {!isRtl && (
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-[#C4A748] opacity-20 rounded-full absolute" />
+                    <div className="w-10 h-10 bg-[#CCB664] opacity-[0.21] rounded-full absolute" />
+                    <Image
+                      src="/star.png"
+                      alt="Experience"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                )}
+                <div
+                  className={`inline-flex flex-col justify-center items-start gap-2 ${
+                    isRtl ? "items-end" : ""
+                  }`}
+                >
+                  <div
+                    className={`justify-start text-[#BC940F] text-base font-semibold capitalize [text-shadow:_0px_2px_2px_rgb(0_0_0_/_0.25)] ${
+                      isRtl ? "text-right" : ""
+                    }`}
+                  >
+                    {t("stats.experience")}
+                  </div>
+                  <div
+                    className={`justify-start text-[#BC940F] text-[22px] font-bold font-['Roboto_Condensed'] capitalize ${
+                      isRtl ? "text-right" : ""
+                    }`}
+                  >
+                    {t("stats.experienceValue")}
+                  </div>
+                </div>
+                {isRtl && (
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-[#C4A748] opacity-20 rounded-full absolute" />
+                    <div className="w-10 h-10 bg-[#CCB664] opacity-[0.21] rounded-full absolute" />
+                    <Image
+                      src="/star.png"
+                      alt="Experience"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Vision */}
-      <section className="bg-gray-50 py-10 px-6">
-        <div className="max-w-7xl mx-auto flex justify-center">
-          <div
-            className="bg-purple-700 text-white 
-          rounded-tl-3xl rounded-br-3xl rounded-tr-none rounded-bl-none
-          shadow-lg 
-          max-w-5xl w-full 
-          p-12 grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div>
-              <h3 className="text-3xl font-bold mb-6">Our Vision</h3>
-              <p className="leading-relaxed">
-                We aspire to be the leader in the supply chain industry in
-                Sudan, offering our local and international clients innovative
-                and efficient solutions to streamline the movement of goods and
-                distribution. Our vision is to help strengthen the Sudanese
-                economy by becoming a trusted partner to our clients, through
-                safety, reliability, and excellence in service.
-              </p>
+      {/* Vision & Mission */}
+      <section className="bg-slate-100 py-24 px-6">
+        <div className="max-w-[1440px] mx-auto flex flex-col gap-16">
+          {/* Vision */}
+          <div className="w-full max-w-[1440px] mx-auto px-12 py-16 bg-[#5F349C] rounded-tr-[50px] rounded-bl-[50px] flex justify-center items-center">
+            <div
+              className={`flex justify-center items-center gap-14 ${
+                isRtl ? "flex-row-reverse" : ""
+              }`}
+            >
+              <div className="w-[542px] flex flex-col justify-center items-start gap-12">
+                <h3
+                  className={`self-stretch ${
+                    isRtl ? "text-right" : "text-left"
+                  } text-white text-4xl font-bold leading-10`}
+                >
+                  {t("vision.title")}
+                </h3>
+                <p
+                  className={`self-stretch ${
+                    isRtl ? "text-right" : "text-left"
+                  } text-white text-lg font-semibold leading-6`}
+                >
+                  {t("vision.description")}
+                </p>
+              </div>
+              <Image
+                src="/Rectangle 728-1.png"
+                alt={t("vision.title")}
+                width={416}
+                height={306}
+                className="w-96 h-80 rounded-xl object-cover"
+              />
             </div>
-            <Image
-              src="/Rectangle 728-1.png"
-              alt="Vision"
-              width={400}
-              height={280}
-              className="rounded-lg shadow-md"
-            />
           </div>
-        </div>
-      </section>
 
-      {/* Mission */}
-      <section className="bg-gray-50 py-10 px-6">
-        <div className="max-w-7xl mx-auto flex justify-center">
-          <div
-            className="bg-purple-700 text-white 
-          rounded-tl-3xl rounded-br-3xl rounded-tr-none rounded-bl-none
-          shadow-lg 
-          max-w-5xl w-full 
-          p-12 grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div>
-              <h3 className="text-3xl font-bold mb-6">Our Mission</h3>
-              <p className="leading-relaxed">
-                At Q Supply Chain, our mission is to provide integrated,
-                technology-driven solutions in supply chain services that meet
-                the needs of our clients across purchasing, shipping, customs
-                clearance, storage, distribution, and door-to-door delivery. We
-                aim to be the number one choice for all our clients by offering
-                unparalleled service while ensuring the highest levels of safety
-                and quality.
-              </p>
+          {/* Mission */}
+          <div className="w-full max-w-[1440px] mx-auto px-12 py-16 bg-[#5F349C] rounded-tl-[50px] rounded-br-[50px] flex justify-center items-center">
+            <div
+              className={`flex justify-center items-center gap-14 ${
+                isRtl ? "flex-row-reverse" : ""
+              }`}
+            >
+              <div className="w-[542px] flex flex-col justify-center items-start gap-12">
+                <h3
+                  className={`self-stretch ${
+                    isRtl ? "text-right" : "text-left"
+                  } text-white text-4xl font-bold leading-10`}
+                >
+                  {t("mission.title")}
+                </h3>
+                <p
+                  className={`self-stretch ${
+                    isRtl ? "text-right" : "text-left"
+                  } text-white text-lg font-semibold leading-6`}
+                >
+                  {t("mission.description")}
+                </p>
+              </div>
+              <Image
+                src="/Rectangle 728.png"
+                alt={t("mission.title")}
+                width={416}
+                height={306}
+                className="w-96 h-80 rounded-xl object-cover"
+              />
             </div>
-            <Image
-              src="/Rectangle 728.png"
-              alt="Mission"
-              width={400}
-              height={280}
-              className="rounded-lg shadow-md"
-            />
           </div>
         </div>
       </section>
 
       {/* Objectives */}
-      <section className="bg-white py-20 px-6">
-        <div className="max-w-7xl mx-auto flex justify-center">
-          <div className="text-center max-w-5xl w-full">
-            <h3 className="text-3xl font-bold text-purple-700 mb-12">
-              Our Objectives
-            </h3>
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Continuous Innovation",
-                  desc: "We strive to continuously enhance our services by adopting the latest technologies and systems.",
-                  icon: "/mdi_lightbulb-on-outline.svg",
-                },
-                {
-                  title: "Excellence in Quality",
-                  desc: "Our focus is on delivering top-quality services with meticulous attention to detail.",
-                  icon: "/mdi_star-check-outline.svg",
-                },
-                {
-                  title: "Safety & Reliability",
-                  desc: "We are committed to providing secure and reliable storage environments, backed by advanced fire suppression systems.",
-                  icon: "/mdi_shield-check-outline.svg",
-                },
-                {
-                  title: "Expansion & Leadership",
-                  desc: "We aim for sustainable growth and expansion in both the local and regional markets.",
-                  icon: "/mdi_trending-up.svg",
-                },
-                {
-                  title: "Investment in Human Capital",
-                  desc: "We believe in the power of human resources and are dedicated to training and developing our team.",
-                  icon: "/oui_users.svg",
-                },
-                {
-                  title: "Transfer Our Experience",
-                  desc: "We aim to transfer our exceptional experience and expand it across Sudan and Africa.",
-                  icon: "/famicons_earth-outline.svg",
-                },
-              ].map((obj, i) => (
-                <div
-                  key={i}
-                  className="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition"
-                >
-                  <Image
-                    src={obj.icon}
-                    alt={obj.title}
-                    width={48}
-                    height={48}
-                    className="h-12 w-12 mx-auto mb-4"
-                  />
-                  <h4 className="font-semibold text-lg mb-2 text-gray-800">
-                    {obj.title}
-                  </h4>
-                  <p className="text-gray-600 text-sm">{obj.desc}</p>
-                </div>
-              ))}
+      <section className="bg-white py-24 px-6">
+        <div className="max-w-[1440px] mx-auto">
+          <h2 className="text-5xl font-bold text-[#5F349C] mb-20 text-center">
+            {t("objectives.title")}
+          </h2>
+
+          <div
+            dir="ltr"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16 max-w-6xl mx-auto"
+          >
+            {/* Continuous Innovation */}
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
+                <Image
+                  src="/mdi_lightbulb-on-outline.svg"
+                  alt="Innovation"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                {t("objectives.items.innovation.title")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t("objectives.items.innovation.description")}
+              </p>
+            </div>
+
+            {/* Excellence in Quality */}
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
+                <Image
+                  src="/mdi_star-check-outline.svg"
+                  alt="Quality"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                {t("objectives.items.excellence.title")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t("objectives.items.excellence.description")}
+              </p>
+            </div>
+
+            {/* Safety & Reliability */}
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
+                <Image
+                  src="/mdi_shield-check-outline.svg"
+                  alt="Safety"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                {t("objectives.items.safety.title")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t("objectives.items.safety.description")}
+              </p>
+            </div>
+
+            {/* Expansion & Leadership */}
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
+                <Image
+                  src="/mdi_trending-up.svg"
+                  alt="Expansion"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                {t("objectives.items.expansion.title")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t("objectives.items.expansion.description")}
+              </p>
+            </div>
+
+            {/* Investment in Human Capital */}
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
+                <Image
+                  src="/oui_users.svg"
+                  alt="Human Capital"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                {t("objectives.items.human.title")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t("objectives.items.human.description")}
+              </p>
+            </div>
+
+            {/* Transfer our Exceptional */}
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
+                <Image
+                  src="/famicons_earth-outline.svg"
+                  alt="Global Expansion"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">
+                {t("objectives.items.transfer.title")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t("objectives.items.transfer.description")}
+              </p>
             </div>
           </div>
         </div>

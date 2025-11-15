@@ -61,5 +61,54 @@
     "title": "What Makes Us Different?",
     "description": "At Q Supply Chain, we provide integrated solutions powered by the latest technologies, ensuring enhanced efficiency and minimizing errors through our advanced electronic system. We offer cutting-edge tools, equipment, and a highly qualified team to deliver top-tier services.\nOur focus is on maximizing shareholder value by leveraging our deep understanding of the fastest-growing global markets. We also possess high-value assets through our companies and investment partners in emerging markets.\nWe are committed to sustainability in all our operations and prioritize supporting small industries by providing dedicated warehouses and facilities that cater to their needs, helping them grow and thrive sustainably.\nAt Q Supply Chain, security and safety are our top priorities. Our warehouse is equipped with the latest surveillance cameras and sensors for comprehensive monitoring. Entrances are managed through an advanced access control system, with each entry point being screened by X-ray machines. We are committed to providing a safe working environment for all employees and workers, ensuring their personal safety and enhancing storage security",
     "button": "About Us"
+  },
+  "aboutPage": {
+    "title": "About Us",
+    "description": "Q Supply Chain is an investment of the Kuwait-Sudan Holding Company, established to be the trusted provider of premium logistics solutions in Sudan. We are the only company offering comprehensive services in supply chains with high professionalism and advanced technology, backed by the largest and most advanced storage facilities in the country.\nWe take pride in owning the largest and most advanced storage facilities in Sudan, designed to meet the highest international standards in quality and safety. Our warehouses are equipped with cutting-edge technology to ensure the perfect environment for all types of goods.\nWith over 20,000 square meters of storage space and stacking heights exceeding 17 meters, we offer flexible and innovative solutions that cater to every type of product in varying sizes, weights, and lengths. Our storage units range from dry, refrigerated, frozen, indoor, and outdoor spaces – all in one place, designed to meet your needs.",
+    "stats": {
+      "storageSpace": "storage space",
+      "storageValue": "20,000+ m²",
+      "height": "meters of height",
+      "heightValue": "17+",
+      "experience": "years of experience",
+      "experienceValue": "2015+"
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "We aspire to be the leader in the supply chain industry in Sudan, offering our local and international clients innovative and efficient solutions to streamline the movement of goods and distribution. Our vision is to help strengthen the Sudanese economy by becoming a trusted partner to our clients, through safety, reliability, and excellence in service."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "At Q Supply Chain, our mission is to provide integrated, technology-driven solutions in supply chain services that meet the needs of our clients across purchasing, shipping, customs clearance, storage, distribution, and door-to-door delivery. We aim to be the number one choice for all our clients by offering unparalleled service while ensuring the highest levels of safety and quality."
+    },
+    "objectives": {
+      "title": "Our Objectives",
+      "items": {
+        "innovation": {
+          "title": "Continuous Innovation",
+          "description": "We strive to continuously enhance our services by adopting the latest technologies and systems."
+        },
+        "excellence": {
+          "title": "Excellence in Quality",
+          "description": "Our focus is on delivering top-quality services with meticulous attention to detail, ensuring customer satisfaction."
+        },
+        "safety": {
+          "title": "Safety & Reliability",
+          "description": "We are committed to providing secure and reliable storage environments, backed by advanced fire suppression systems."
+        },
+        "expansion": {
+          "title": "Expansion & Leadership",
+          "description": "We aim for sustainable growth and expansion in both the local and regional markets, establishing a strong presence in the supply chain industry."
+        },
+        "human": {
+          "title": "Investment in Human Capital",
+          "description": "We believe in the power of human resources and are dedicated to training and developing our team to ensure the best service for our clients."
+        },
+        "transfer": {
+          "title": "Transfer our Exceptional",
+          "description": "At Q Supply Chain Company, we aim to transfer our exceptional experience and expand it across Sudan and Africa. We are fully prepared to collaborate with all those interested in working and developing this field for mutual success."
+        }
+      }
+    }
   }
 }
