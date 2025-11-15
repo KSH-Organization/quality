@@ -110,5 +110,17 @@
         }
       }
     }
+  },
+  "peoplePage": {
+    "title": "Our Departments",
+    "departments": {
+      "procurement": "Procurement & Sourcing Department.",
+      "logistics": "Logistics & Transportation Department.",
+      "warehousing": "Warehousing & Inventory Department.",
+      "distribution": "Distribution & Customer Service Department.",
+      "scm": "SCM Technology & Systems Department.",
+      "planning": "Planning & Analysis Department.",
+      "quality": "Quality Assurance & Safety Department."
+    }
   }
 }
