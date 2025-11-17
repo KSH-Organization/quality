@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import LanguageSwitcher from "@/app/[locale]/components/LanguageSwitcher";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -127,6 +128,9 @@ export default function Navbar() {
                 {t("nav.contact")}
               </button>
             </div>
+            <div className={`pt-2${isRTL ? " text-right" : ""}`}>
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       )}
@@ -205,6 +209,14 @@ export default function Navbar() {
             >
               {t("nav.contact")}
             </button>
+          </div>
+
+          {/* Language Switcher */}
+          <div
+            className="absolute top-[25px]"
+            style={isRTL ? { left: "31px" } : { left: "1310px" }}
+          >
+            <LanguageSwitcher />
           </div>
         </div>
       </div>
