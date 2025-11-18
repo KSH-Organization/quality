@@ -121,11 +121,13 @@ export default function Navbar() {
             >
               {t("nav.people")}
             </Link>
-            <div className={`pt-2${isRTL ? " text-right" : ""}`}>
-              <button className="w-full px-5 py-2.5 bg-[#5F349C] text-white text-sm font-medium rounded-md hover:opacity-90">
-                {t("nav.contact")}
-              </button>
-            </div>
+            <Link
+              onClick={() => setOpen(false)}
+              href={`/${locale}/contact`}
+              className="block w-full px-5 py-2.5 bg-[#5F349C] text-white text-sm font-medium rounded-md hover:opacity-90 text-center mt-2"
+            >
+              {t("nav.contact")}
+            </Link>
             <div className={`pt-2${isRTL ? " text-right" : ""}`}>
               <LanguageSwitcher />
             </div>
@@ -200,13 +202,14 @@ export default function Navbar() {
             className="absolute top-[18px] inline-flex justify-start items-start gap-3.5 overflow-hidden"
             style={ctaPositionStyle}
           >
-            <button
+            <Link
+              href={`/${locale}/contact`}
               className={`px-5 py-2.5 bg-[#5F349C] rounded-md flex justify-start items-center gap-2.5 text-white text-sm font-medium leading-5 hover:opacity-90${
                 isRTL ? "" : ""
               }`}
             >
               {t("nav.contact")}
-            </button>
+            </Link>
           </div>
 
           {/* Language Switcher */}
