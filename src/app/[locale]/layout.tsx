@@ -38,7 +38,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   const fontClass = locale === "ar" ? cairo.className : karma.className;
 
   return (
-    <html lang={locale} dir={direction}>
+    <html lang={locale} dir={direction} className="overflow-x-hidden">
       <body
         className={`${direction === "rtl" ? "rtl" : ""} ${fontClass}`.trim()}
       >

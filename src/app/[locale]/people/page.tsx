@@ -27,14 +27,14 @@ export default function PeoplePage() {
       <Hero imageUrl="/people-hero.png" />
 
       {/* Departments Section */}
-      <section className="py-20 px-6">
+      <section className="py-12 md:py-20 px-4 md:px-6">
         <div className="max-w-[1600px] mx-auto">
-          <h2 className="text-4xl font-bold text-[#5F349C] text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#5F349C] text-center mb-12 md:mb-16">
             {t("title")}
           </h2>
 
           {/* First Row - 4 cards */}
-          <div dir="ltr" className="flex justify-center gap-8 mb-8">
+          <div dir="ltr" className="flex justify-center gap-8 flex-wrap mb-8">
             {departmentsRow1.map((dept) => (
               <div key={dept} className="w-80 h-80 relative">
                 <div className="w-80 h-80 absolute bg-white rounded-[10px] outline outline-1 outline-neutral-400" />
@@ -47,7 +47,7 @@ export default function PeoplePage() {
           </div>
 
           {/* Second Row - 3 cards */}
-          <div dir="ltr" className="flex justify-center gap-8">
+          <div dir="ltr" className="flex justify-center gap-8 flex-wrap">
             {departmentsRow2.map((dept) => (
               <div key={dept} className="w-80 h-80 relative">
                 <div className="w-80 h-80 absolute bg-white rounded-[10px] outline outline-1 outline-neutral-400" />

@@ -11,7 +11,7 @@ export default function About() {
   return (
     <section id="about" className="bg-[#F2E7BF] py-16 md:py-20">
       <div
-        className={`mx-auto max-w-[1440px] flex flex-col ${
+        className={`mx-auto max-w-[1440px] px-4 sm:px-8 md:px-16 lg:px-24 flex flex-col ${
           isRtl ? "md:flex-row" : "md:flex-row"
         } gap-8 md:gap-12 lg:gap-16 items-center`}
       >

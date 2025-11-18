@@ -22,9 +22,7 @@ export default function Navbar() {
     : { left: "1182.5px", right: "auto" };
   return (
     <header
-      className={`bg-slate-50 h-20 w-full overflow-hidden${
-        isRTL ? " lg:[direction:rtl]" : ""
-      }`}
+      className={`bg-slate-50 h-20 w-full${isRTL ? " lg:[direction:rtl]" : ""}`}
     >
       {/* Mobile / small screens: hamburger menu */}
       <div
@@ -136,8 +134,8 @@ export default function Navbar() {
       )}
 
       {/* Desktop: pixel-perfect per Figma */}
-      <div className="hidden lg:block h-full">
-        <div className="relative w-[1440px] h-20 mx-auto">
+      <div className="hidden lg:block h-full overflow-hidden">
+        <div className="relative w-full max-w-[1440px] h-20 mx-auto overflow-visible">
           {/* Logo block */}
           <div
             className="absolute top-[8px] inline-flex justify-start items-center gap-[2.67px]"

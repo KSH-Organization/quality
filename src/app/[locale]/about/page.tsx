@@ -22,7 +22,7 @@ export default function About() {
       {/* About Section */}
       <section className="bg-white">
         <div className="self-stretch rounded-bl-[50px] rounded-br-[50px] flex flex-col justify-center items-center">
-          <div className="max-w-[1600px] w-full px-24 py-24 bg-white flex justify-between items-center gap-24">
+          <div className="max-w-[1600px] w-full px-4 sm:px-8 md:px-16 lg:px-24 py-8 md:py-16 lg:py-24 bg-white flex flex-col lg:flex-row justify-between items-center gap-8 md:gap-16 lg:gap-24">
             <div
               className={`flex-1 flex flex-col justify-start items-start gap-8 ${
                 isRtl ? "order-2" : "order-1"
@@ -58,10 +58,10 @@ export default function About() {
         </div>
 
         {/* Stats Section */}
-        <div className="flex justify-center items-center py-12">
+        <div className="flex justify-center items-center py-12 px-4">
           <div
-            className={`w-[1000px] h-44 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border-2 border-[#BC940F] inline-flex justify-center items-center gap-12 ${
-              isRtl ? "flex-row-reverse" : ""
+            className={`w-full max-w-[1000px] h-auto md:h-44 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border-2 border-[#BC940F] flex flex-col md:flex-row justify-center items-center gap-6 md:gap-12 py-6 md:py-0 ${
+              isRtl ? "md:flex-row-reverse" : ""
             }`}
           >
             {/* Storage Space */}
@@ -239,24 +239,24 @@ export default function About() {
       <section className="bg-slate-100 py-24 px-6">
         <div className="max-w-[1440px] mx-auto flex flex-col gap-16">
           {/* Vision */}
-          <div className="w-full max-w-[1440px] mx-auto px-12 py-16 bg-[#5F349C] rounded-tr-[50px] rounded-bl-[50px] flex justify-center items-center">
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 py-8 md:py-16 bg-[#5F349C] rounded-tr-[50px] rounded-bl-[50px] flex justify-center items-center">
             <div
-              className={`flex justify-center items-center gap-14 ${
-                isRtl ? "flex-row-reverse" : ""
+              className={`flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-14 ${
+                isRtl ? "lg:flex-row-reverse" : ""
               }`}
             >
-              <div className="w-[542px] flex flex-col justify-center items-start gap-12">
+              <div className="w-full lg:w-[542px] flex flex-col justify-center items-start gap-6 lg:gap-12">
                 <h3
                   className={`self-stretch ${
                     isRtl ? "text-right" : "text-left"
-                  } text-white text-4xl font-bold leading-10`}
+                  } text-white text-2xl md:text-4xl font-bold leading-8 md:leading-10`}
                 >
                   {t("vision.title")}
                 </h3>
                 <p
                   className={`self-stretch ${
                     isRtl ? "text-right" : "text-left"
-                  } text-white text-lg font-semibold leading-6`}
+                  } text-white text-base md:text-lg font-semibold leading-6`}
                 >
                   {t("vision.description")}
                 </p>
@@ -266,30 +266,30 @@ export default function About() {
                 alt={t("vision.title")}
                 width={416}
                 height={306}
-                className="w-96 h-80 rounded-xl object-cover"
+                className="w-full max-w-[384px] lg:w-96 h-64 lg:h-80 rounded-xl object-cover"
               />
             </div>
           </div>
 
           {/* Mission */}
-          <div className="w-full max-w-[1440px] mx-auto px-12 py-16 bg-[#5F349C] rounded-tl-[50px] rounded-br-[50px] flex justify-center items-center">
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 py-8 md:py-16 bg-[#5F349C] rounded-tl-[50px] rounded-br-[50px] flex justify-center items-center">
             <div
-              className={`flex justify-center items-center gap-14 ${
-                isRtl ? "flex-row-reverse" : ""
+              className={`flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-14 ${
+                isRtl ? "lg:flex-row-reverse" : ""
               }`}
             >
-              <div className="w-[542px] flex flex-col justify-center items-start gap-12">
+              <div className="w-full lg:w-[542px] flex flex-col justify-center items-start gap-6 lg:gap-12">
                 <h3
                   className={`self-stretch ${
                     isRtl ? "text-right" : "text-left"
-                  } text-white text-4xl font-bold leading-10`}
+                  } text-white text-2xl md:text-4xl font-bold leading-8 md:leading-10`}
                 >
                   {t("mission.title")}
                 </h3>
                 <p
                   className={`self-stretch ${
                     isRtl ? "text-right" : "text-left"
-                  } text-white text-lg font-semibold leading-6`}
+                  } text-white text-base md:text-lg font-semibold leading-6`}
                 >
                   {t("mission.description")}
                 </p>
@@ -299,7 +299,7 @@ export default function About() {
                 alt={t("mission.title")}
                 width={416}
                 height={306}
-                className="w-96 h-80 rounded-xl object-cover"
+                className="w-full max-w-[384px] lg:w-96 h-64 lg:h-80 rounded-xl object-cover"
               />
             </div>
           </div>

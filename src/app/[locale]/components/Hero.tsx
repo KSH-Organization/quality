@@ -19,26 +19,26 @@ export default function Hero({ imageUrl = "/hero.png" }: HeroProps) {
       {/* <div className="absolute inset-0 bg-black/40 rounded-b-[80px]" /> */}
 
       {/* Title */}
-      <div className="relative z-10">
+      <div className="relative z-10 px-4 max-w-full">
         {isRTL ? (
-          <div className="w-[857px] h-52 text-center justify-center">
-            <span className="text-white text-5xl font-bold font-['Cairo'] leading-[100px]">
+          <div className="max-w-[857px] w-full mx-auto h-auto py-8 text-center justify-center">
+            <span className="text-white text-3xl sm:text-4xl md:text-5xl font-bold font-['Cairo'] leading-tight md:leading-[100px]">
               الشركة الكويتية السودانية القابضة
               <br />
             </span>
-            <span className="text-yellow-600 text-5xl font-bold font-['Cairo'] leading-[100px]">
+            <span className="text-yellow-600 text-3xl sm:text-4xl md:text-5xl font-bold font-['Cairo'] leading-tight md:leading-[100px]">
               اللوجستيات
             </span>
           </div>
         ) : (
-          <div className="w-[646px] justify-start">
-            <span className="text-white text-8xl font-bold font-['Karma'] leading-[8.01px]">
+          <div className="max-w-[646px] w-full mx-auto justify-start text-center md:text-left">
+            <span className="text-white text-4xl sm:text-6xl md:text-8xl font-bold font-['Karma'] leading-tight">
               {" "}
             </span>
-            <span className="text-yellow-600 text-8xl font-bold font-['Karma'] leading-[8.01px]">
+            <span className="text-yellow-600 text-4xl sm:text-6xl md:text-8xl font-bold font-['Karma'] leading-tight">
               KSHC
             </span>
-            <span className="text-white text-8xl font-bold font-['Karma'] leading-[8.01px]">
+            <span className="text-white text-4xl sm:text-6xl md:text-8xl font-bold font-['Karma'] leading-tight">
               {" "}
               Logistic
             </span>
