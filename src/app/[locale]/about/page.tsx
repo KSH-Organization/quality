@@ -1,14 +1,88 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 
-export default function About() {
+export default function AboutPage() {
   const t = useTranslations("aboutPage");
   const locale = useLocale();
+
+  // Animated stats
+  const [stats, setStats] = useState({
+    storage: 0,
+    height: 0,
+    experience: 0,
+  });
+  const targetStats = {
+    storage: 20000,
+    height: 17,
+    experience: 10,
+  };
+  const statsRef = useRef<HTMLDivElement | null>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, [hasAnimated]);
+
+  useEffect(() => {
+    if (!hasAnimated) return;
+    let frame: number;
+    let direction = 1;
+    let current = { ...stats };
+    // Calculate increments so all reach max in 60 frames
+    const increments: Record<keyof typeof targetStats, number> = {
+      storage: targetStats.storage / 60,
+      height: targetStats.height / 60,
+      experience: targetStats.experience / 60,
+    };
+    const animate = () => {
+      let done = true;
+      (Object.keys(targetStats) as Array<keyof typeof targetStats>).forEach(
+        (key) => {
+          const target = direction === 1 ? targetStats[key] : 0;
+          const increment = increments[key];
+          if (direction === 1 && current[key] < target) {
+            current[key] += increment;
+            if (current[key] > target) current[key] = target;
+            done = false;
+          } else if (direction === -1 && current[key] > target) {
+            current[key] -= increment;
+            if (current[key] < target) current[key] = target;
+            done = false;
+          }
+        }
+      );
+      setStats({
+        storage: Math.round(current.storage),
+        height: Math.round(current.height),
+        experience: Math.round(current.experience),
+      });
+      if (!done) {
+        frame = window.requestAnimationFrame(animate);
+      } else {
+        direction = direction === 1 ? -1 : 1;
+        setTimeout(() => {
+          frame = window.requestAnimationFrame(animate);
+        }, 1200);
+      }
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [hasAnimated]);
   const isRtl = locale === "ar";
 
   return (
@@ -58,7 +132,10 @@ export default function About() {
         </div>
 
         {/* Stats Section */}
-        <div className="flex justify-center items-center py-12 px-4">
+        <div
+          ref={statsRef}
+          className="flex justify-center items-center py-12 px-4"
+        >
           <div
             className={`w-full max-w-[1000px] h-auto md:h-44 rounded-2xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border-2 border-[#BC940F] flex flex-col md:flex-row justify-center items-center gap-6 md:gap-12 py-6 md:py-0 ${
               isRtl ? "md:flex-row-reverse" : ""
@@ -101,7 +178,7 @@ export default function About() {
                       isRtl ? "text-right" : ""
                     }`}
                   >
-                    {t("stats.storageValue")}
+                    {stats.storage.toLocaleString()}+ M²
                   </div>
                 </div>
                 {isRtl && (
@@ -157,7 +234,7 @@ export default function About() {
                       isRtl ? "text-right" : ""
                     }`}
                   >
-                    {t("stats.heightValue")}
+                    {stats.height}+
                   </div>
                 </div>
                 {isRtl && (
@@ -213,7 +290,7 @@ export default function About() {
                       isRtl ? "text-right" : ""
                     }`}
                   >
-                    {t("stats.experienceValue")}
+                    {stats.experience}+
                   </div>
                 </div>
                 {isRtl && (
