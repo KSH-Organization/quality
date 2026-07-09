@@ -35,7 +35,7 @@ export default async function NewsEventsPage({
   return (
     <>
       {/* Hero */}
-      <section className="bg-brand px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
+      <section className="bg-brand px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-36">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
           <span className="rounded-full border border-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-accent">
             {t("hero.badge")}
@@ -50,7 +50,7 @@ export default async function NewsEventsPage({
       </section>
 
       {/* News */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-24">
         <div className="mx-auto max-w-7xl">
           <p className="text-sm font-bold uppercase tracking-wide text-accent">
             {t("newsSection.label")}
@@ -94,7 +94,7 @@ export default async function NewsEventsPage({
       </section>
 
       {/* Events */}
-      <section className="bg-line/40 px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+      <section className="bg-line/40 px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-24">
         <div className="mx-auto max-w-7xl">
           <p className="text-sm font-bold uppercase tracking-wide text-accent">
             {t("eventsSection.label")}

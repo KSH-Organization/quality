@@ -53,7 +53,7 @@ export default async function AboutPage({
       </section>
 
       {/* About */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 lg:flex-row lg:items-start lg:gap-24">
           <div className="flex-1">
             <h1 className="text-4xl font-extrabold text-brand sm:text-5xl">
@@ -95,7 +95,7 @@ export default async function AboutPage({
       </section>
 
       {/* Vision */}
-      <section className="bg-line/40 px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-line/40 px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 lg:flex-row lg:gap-24">
           <div className="flex-1">
             <h2 className="text-3xl font-extrabold text-brand sm:text-4xl">
@@ -118,7 +118,7 @@ export default async function AboutPage({
       </section>
 
       {/* Mission */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 lg:flex-row lg:gap-24">
           <div className="order-2 w-full max-w-lg shrink-0 lg:order-1 lg:w-2/5">
             <Image
@@ -141,7 +141,7 @@ export default async function AboutPage({
       </section>
 
       {/* Objectives */}
-      <section className="bg-line/40 px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-line/40 px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-3xl font-extrabold text-brand sm:text-4xl">
             {t("objectives.title")}

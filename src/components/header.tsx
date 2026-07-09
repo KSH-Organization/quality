@@ -25,7 +25,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-brand shadow-lg">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-22 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-[5.5556vw]">
         <Link
           href="/"
           className="flex shrink-0 items-center"
@@ -34,9 +34,9 @@ export default function Header() {
           <Image
             src="/images/logo.png"
             alt="KSHC Logistic"
-            width={96}
-            height={56}
-            className="h-14 w-auto object-contain"
+            width={135}
+            height={79}
+            className="h-19 w-auto object-contain"
             priority
           />
         </Link>

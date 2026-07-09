@@ -36,7 +36,7 @@ export default async function CareersPage({
       </section>
 
       {/* Intro */}
-      <section className="bg-white px-4 pt-20 sm:px-6 lg:px-8 lg:pt-24">
+      <section className="bg-white px-4 pt-20 sm:px-6 lg:px-[5.5556vw] lg:pt-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-end gap-8 lg:grid-cols-2">
           <div>
             <p className="text-sm font-bold uppercase tracking-wide text-accent">
@@ -55,7 +55,7 @@ export default async function CareersPage({
       </section>
 
       {/* Contact + Form */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-[1fr_2fr]">
           {/* Contact column */}
           <div>

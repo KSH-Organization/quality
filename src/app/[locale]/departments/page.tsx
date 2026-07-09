@@ -39,7 +39,7 @@ export default async function DepartmentsPage({
   return (
     <>
       {/* Hero */}
-      <section className="bg-brand px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
+      <section className="bg-brand px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-36">
         <div className="mx-auto max-w-7xl">
           <h1 className="text-4xl font-extrabold text-white sm:text-6xl lg:text-7xl">
             {t("hero.title")}
@@ -51,7 +51,7 @@ export default async function DepartmentsPage({
       </section>
 
       {/* Departments grid */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-3xl font-extrabold text-brand sm:text-4xl">
             {t("section.title")}
@@ -96,7 +96,7 @@ export default async function DepartmentsPage({
       </section>
 
       {/* CTA banner */}
-      <section className="bg-brand px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <section className="bg-brand px-4 py-16 sm:px-6 lg:px-[5.5556vw] lg:py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
           <div className="max-w-2xl">
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">

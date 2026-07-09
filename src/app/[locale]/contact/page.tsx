@@ -28,7 +28,7 @@ export default async function ContactPage({
   return (
     <>
       {/* Hero */}
-      <section className="bg-brand px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-brand px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
           <h1 className="text-4xl font-extrabold text-white sm:text-6xl">
             {t("hero.title")}
@@ -40,7 +40,7 @@ export default async function ContactPage({
       </section>
 
       {/* Main content */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-[1fr_1.2fr]">
           {/* Info */}
           <div>

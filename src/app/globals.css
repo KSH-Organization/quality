@@ -14,6 +14,13 @@
 
   --font-sans: var(--font-inter), var(--font-cairo), ui-sans-serif, system-ui,
     sans-serif;
+
+  /* Widen the main content container cap so wide screens fill more like the
+     Figma frame instead of locking at 1280px. Combined with the proportional
+     lg horizontal gutter (lg:px-[5.5556vw] = 80px at a 1440px design width),
+     content width and side whitespace track the Figma proportions at every
+     viewport size while staying pixel-exact at 1440px. */
+  --container-7xl: 96rem;
 }
 
 html {

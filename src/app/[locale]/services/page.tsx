@@ -61,7 +61,7 @@ export default async function ServicesPage({
       </section>
 
       {/* Services grid */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto max-w-7xl">
           <SectionHeader label={t("label")} title={t("title")} />
           <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">

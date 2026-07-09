@@ -113,13 +113,13 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
 
       {/* Services */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-white px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-30">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             label={t("capabilities.label")}
             title={t("capabilities.title")}
           />
-          <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2">
             {SERVICES.map(({ key, Icon }) => (
               <article
                 key={key}
@@ -145,13 +145,13 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
 
       {/* Clients */}
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+      <section className="bg-white px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-25">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             label={t("clients.label")}
             title={t("clients.title")}
           />
-          <div className="mt-20 flex flex-wrap items-center justify-center gap-12 lg:justify-between">
+          <div className="mt-34 flex flex-wrap items-center justify-center gap-12 lg:justify-between">
             {CLIENTS.map(({ key, src, w, h }) => (
               <Image
                 key={key}
@@ -167,14 +167,14 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
 
       {/* Different / Edge */}
-      <section className="bg-line px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="bg-line px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-30">
         <div className="mx-auto flex max-w-7xl flex-col items-start gap-16 lg:flex-row lg:items-center lg:gap-20">
           <div className="flex flex-1 flex-col gap-8">
             <SectionHeader
               label={t("edge.label")}
               title={`${t("edge.titleA")} ${t("edge.titleB")}${t("edge.titleC")}`}
             />
-            <div className="space-y-4 text-lg leading-relaxed text-brand">
+            <div className="space-y-4 text-lg leading-relaxed leading-[normal] text-brand">
               <p>{t("edge.p1")}</p>
               <p>{t("edge.p2")}</p>
               <p>{t("edge.p3")}</p>
@@ -197,7 +197,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                   <Icon className="size-6 text-brand" aria-hidden />
                 </div>
                 <div>
-                  <p className="text-3xl font-extrabold text-white">
+                  <p className="text-[32px] font-extrabold text-white">
                     {t(`edge.stats.${key}.value`)}
                   </p>
                   <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-muted">
