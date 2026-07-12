@@ -42,7 +42,13 @@ export default async function DepartmentsPage({
       <section className="bg-brand px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-36">
         <div className="mx-auto max-w-7xl">
           <h1 className="text-4xl font-extrabold text-white sm:text-6xl lg:text-7xl">
-            {t("hero.title")}
+            {t("hero.title")
+              .split(" ")
+              .map((word, i) => (
+                <span key={i} className={i === 1 ? "text-accent" : undefined}>
+                  {i === 0 ? word : ` ${word}`}
+                </span>
+              ))}
           </h1>
           <p className="mt-6 max-w-3xl text-lg font-medium leading-relaxed text-hero-sub sm:text-xl">
             {t("hero.subtitle")}
@@ -56,7 +62,7 @@ export default async function DepartmentsPage({
           <h2 className="text-3xl font-extrabold text-brand sm:text-4xl">
             {t("section.title")}
           </h2>
-          <p className="mt-4 max-w-2xl text-lg text-muted-dark">
+          <p className="mt-4 max-w-2xl text-lg text-muted-dark leading-[normal]">
             {t("section.subtitle")}
           </p>
           <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -65,21 +71,21 @@ export default async function DepartmentsPage({
                 key={key}
                 className="flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition-shadow hover:shadow-lg"
               >
-                <div className="flex size-14 items-center justify-center rounded-xl bg-brand">
+                <div className="flex size-14 items-center justify-center rounded-xl bg-[rgba(255,_184,_0,_0.10)]">
                   <Icon className="size-7 text-accent" aria-hidden />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-ink">
                     {t(`items.${key}.title`)}
                   </h3>
-                  <p className="mt-3 leading-relaxed text-muted-dark">
+                  <p className="mt-3 leading-[22px] text-muted-dark">
                     {t(`items.${key}.body`)}
                   </p>
                 </div>
               </article>
             ))}
             <article className="flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition-shadow hover:shadow-lg md:col-span-2 lg:col-span-3">
-              <div className="flex size-14 items-center justify-center rounded-xl bg-brand">
+              <div className="flex size-14 items-center justify-center rounded-xl bg-[rgba(255,_184,_0,_0.10)]">
                 <ShieldCheck className="size-7 text-accent" aria-hidden />
               </div>
               <div>
@@ -96,13 +102,13 @@ export default async function DepartmentsPage({
       </section>
 
       {/* CTA banner */}
-      <section className="bg-brand px-4 py-16 sm:px-6 lg:px-[5.5556vw] lg:py-20">
+      <section className="bg-[#15052d] px-4 py-16 sm:px-6 lg:px-[5.5556vw] lg:py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
           <div className="max-w-2xl">
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
               {t("cta.title")}
             </h2>
-            <p className="mt-4 text-lg leading-relaxed text-hero-sub">
+            <p className="mt-4 text-lg leading-[normal] text-hero-sub">
               {t("cta.subtitle")}
             </p>
           </div>

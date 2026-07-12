@@ -17,7 +17,7 @@ export default function CareersForm() {
 
   if (submitted) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-line bg-white p-6 text-brand">
+      <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-6 text-white">
         <CheckCircle2 className="size-6 text-accent" aria-hidden />
         <p className="font-semibold">{t("success")}</p>
       </div>
@@ -38,19 +38,19 @@ export default function CareersForm() {
           name="job"
           required
           defaultValue=""
-          className="w-full appearance-none border-b border-line bg-transparent py-3 pe-8 text-ink focus:border-accent focus:outline-none"
+          className="w-full appearance-none border-b border-white/50 bg-transparent py-3 pe-8 text-white focus:border-accent focus:outline-none"
         >
-          <option value="" disabled>
+          <option value="" disabled className="text-ink">
             {t("availableJobs")}
           </option>
           {JOB_KEYS.map((key) => (
-            <option key={key} value={key}>
+            <option key={key} value={key} className="text-ink">
               {t(`jobs.${key}`)}
             </option>
           ))}
         </select>
         <ChevronDown
-          className="pointer-events-none absolute inset-e-1 top-1/2 size-4 -translate-y-1/2 text-muted-dark"
+          className="pointer-events-none absolute inset-e-1 top-1/2 size-4 -translate-y-1/2 text-white/70"
           aria-hidden
         />
       </div>
@@ -65,7 +65,7 @@ export default function CareersForm() {
           name="email"
           required
           placeholder={t("email")}
-          className="w-full border-b border-line bg-transparent py-3 text-ink placeholder:text-muted-dark focus:border-accent focus:outline-none"
+          className="w-full border-b border-white/50 bg-transparent py-3 text-white placeholder:text-white/70 focus:border-accent focus:outline-none"
         />
       </div>
 
@@ -79,7 +79,7 @@ export default function CareersForm() {
           name="fullName"
           required
           placeholder={t("fullName")}
-          className="w-full border-b border-line bg-transparent py-3 text-ink placeholder:text-muted-dark focus:border-accent focus:outline-none"
+          className="w-full border-b border-white/50 bg-transparent py-3 text-white placeholder:text-white/70 focus:border-accent focus:outline-none"
         />
       </div>
 
@@ -92,14 +92,14 @@ export default function CareersForm() {
           type="tel"
           name="phone"
           placeholder={t("phone")}
-          className="w-full border-b border-line bg-transparent py-3 text-ink placeholder:text-muted-dark focus:border-accent focus:outline-none"
+          className="w-full border-b border-white/50 bg-transparent py-3 text-white placeholder:text-white/70 focus:border-accent focus:outline-none"
         />
       </div>
 
       <div className="relative">
         <label
           htmlFor="career-cv"
-          className="flex w-full cursor-pointer items-center justify-between border-b border-line py-3 text-muted-dark hover:text-brand"
+          className="flex w-full cursor-pointer items-center justify-between border-b border-white/50 py-3 text-white/70 hover:text-white"
         >
           {t("cv")}
           <Paperclip className="size-4" aria-hidden />
@@ -122,7 +122,7 @@ export default function CareersForm() {
           type="url"
           name="portfolio"
           placeholder={t("portfolio")}
-          className="w-full border-b border-line bg-transparent py-3 text-ink placeholder:text-muted-dark focus:border-accent focus:outline-none"
+          className="w-full border-b border-white/50 bg-transparent py-3 text-white placeholder:text-white/70 focus:border-accent focus:outline-none"
         />
       </div>
 

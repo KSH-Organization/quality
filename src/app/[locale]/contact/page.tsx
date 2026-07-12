@@ -28,12 +28,12 @@ export default async function ContactPage({
   return (
     <>
       {/* Hero */}
-      <section className="bg-brand px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
+      <section className="bg-[#15052D] px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
           <h1 className="text-4xl font-extrabold text-white sm:text-6xl">
             {t("hero.title")}
           </h1>
-          <p className="text-lg font-medium leading-relaxed text-hero-sub sm:text-xl">
+          <p className="text-lg font-medium leading-[31px] text-hero-sub sm:text-xl">
             {t("hero.subtitle")}
           </p>
         </div>
@@ -53,7 +53,7 @@ export default async function ContactPage({
                   key={key}
                   className="flex items-center gap-4 rounded-2xl border border-line p-5"
                 >
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-brand text-white">
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-accent text-white">
                     <Icon className="size-5" aria-hidden />
                   </span>
                   <div>

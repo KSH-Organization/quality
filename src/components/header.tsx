@@ -25,7 +25,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-brand shadow-lg">
-      <div className="mx-auto flex h-22 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-[5.5556vw]">
+      <div className="mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-[5.5556vw]">
         <Link
           href="/"
           className="flex shrink-0 items-center"
@@ -36,7 +36,7 @@ export default function Header() {
             alt="KSHC Logistic"
             width={135}
             height={79}
-            className="h-19 w-auto object-contain"
+            className="h-[79px] w-[135px] my-1.5 object-contain"
             priority
           />
         </Link>
@@ -70,7 +70,7 @@ export default function Header() {
           </Link>
           <Link
             href="/contact"
-            className="hidden rounded-lg bg-accent px-5 py-3 text-base font-bold text-white transition-opacity hover:opacity-90 sm:block"
+            className="hidden  rounded-lg bg-accent px-5 py-3 text-base font-bold text-white transition-opacity hover:opacity-90 sm:block"
           >
             {t("contactUs")}
           </Link>

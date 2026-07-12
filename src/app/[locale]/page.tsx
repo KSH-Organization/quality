@@ -126,7 +126,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 className="flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-8 transition-shadow hover:shadow-lg"
               >
                 <div className="flex size-12 items-center justify-center rounded-xl bg-brand">
-                  <Icon className="size-6 text-accent" aria-hidden />
+                  <Icon className="size-6 text-white" aria-hidden />
                 </div>
                 <h3 className="text-2xl font-bold text-ink">
                   {t(`capabilities.items.${key}`)}
@@ -174,7 +174,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
               label={t("edge.label")}
               title={`${t("edge.titleA")} ${t("edge.titleB")}${t("edge.titleC")}`}
             />
-            <div className="space-y-4 text-lg leading-relaxed leading-[normal] text-brand">
+            <div className="space-y-4 text-lg leading-[normal]  text-brand">
               <p>{t("edge.p1")}</p>
               <p>{t("edge.p2")}</p>
               <p>{t("edge.p3")}</p>
@@ -196,6 +196,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 <div className="flex size-12 items-center justify-center rounded-3xl bg-accent shadow-lg shadow-accent/20">
                   <Icon className="size-6 text-brand" aria-hidden />
                 </div>
+
                 <div>
                   <p className="text-[32px] font-extrabold text-white">
                     {t(`edge.stats.${key}.value`)}

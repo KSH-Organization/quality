@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   Truck,
@@ -50,11 +51,20 @@ export default async function ServicesPage({
           className="object-cover"
         />
         <div className="absolute inset-0 bg-brand-dark/65" aria-hidden />
-        <div className="relative z-10 mx-auto max-w-3xl text-center">
-          <h1 className="text-5xl font-extrabold text-white sm:text-6xl">
-            {tMeta("services.title")}
+        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center gap-y-6">
+          <span className="rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white ">
+            {t("badge")}
+          </span>
+          <h1 className="text-7xl font-extrabold text-white sm:text-6xl">
+            {tMeta("services.title")
+              .split(" ")
+              .map((word, i) => (
+                <span key={i} className={i === 1 ? "text-accent" : undefined}>
+                  {i === 0 ? word : ` ${word}`}
+                </span>
+              ))}
           </h1>
-          <p className="mt-6 text-lg font-semibold leading-relaxed text-hero-sub sm:text-xl">
+          <p className=" text-lg font-semibold leading-[normal] text-hero-sub sm:text-xl">
             {tMeta("services.description")}
           </p>
         </div>
@@ -77,7 +87,7 @@ export default async function ServicesPage({
                   <h2 className="text-2xl font-bold text-ink">
                     {t(`items.${key}.title`)}
                   </h2>
-                  <p className="mt-4 leading-relaxed text-muted-dark">
+                  <p className="mt-4 leading-[normal] text-muted-dark">
                     {t(`items.${key}.body`)}
                   </p>
                 </div>

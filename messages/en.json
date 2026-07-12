@@ -14,7 +14,8 @@
       "description": "Discover the departments powering KSHC Logistic — procurement, transportation, warehousing, distribution, technology, planning, and quality assurance."
     },
     "services": {
-      "title": "Services",
+      "badge": "Our Services",
+      "title": "KSHC Services",
       "description": "Explore KSHC Logistic services: purchasing and contracting, shipping and customs clearance, storage, integrated logistics (2PL–5PL), electronic archiving, and quality."
     },
     "news": {
@@ -22,8 +23,8 @@
       "description": "Stay up to date with the latest news, announcements, and upcoming events from KSHC Logistic."
     },
     "careers": {
-      "title": "Careers",
-      "description": "Join the KSHC Logistic team. Explore open roles and help us shape the future of supply chain management and logistics."
+      "title": "KSHC Careers",
+      "description": "Join a team that moves the world. At KSHC Logistic, we're building the future of supply chain - and we want driven, passionate people to grow with us."
     },
     "contact": {
       "title": "Contact Us",
@@ -199,7 +200,8 @@
     }
   },
   "services": {
-    "label": "Our Services",
+    "badge": "Our Services",
+    "label": "KSHC Services",
     "title": "Integrated Logistics Solutions",
     "items": {
       "purchasing": {
@@ -231,8 +233,8 @@
   "news": {
     "hero": {
       "badge": "Latest Updates",
-      "title": "News & Events",
-      "subtitle": "Stay informed about our latest achievements, announcements, and upcoming industry events."
+      "title": "KSHC News & Events",
+      "subtitle": "Stay updated with the latest news, announcements, and events from KSHC Logistic."
     },
     "newsSection": {
       "label": "News",
@@ -285,6 +287,8 @@
   },
   "careers": {
     "label": "Careers",
+    "badge": "We're Hiring",
+    "heading": "Are you ready to join our team?",
     "titleA": "Join the",
     "titleB": "KSHC Team",
     "tagline": "Building a world-class team dedicated to excellence in supply chain management and logistics.",
