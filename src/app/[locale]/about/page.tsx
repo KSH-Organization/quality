@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
+import Reveal from "@/components/reveal";
 
 export async function generateMetadata({
   params,
@@ -51,13 +52,13 @@ export default async function AboutPage({
         />
         <div className="absolute inset-0 bg-brand-dark/40" aria-hidden />
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center">
-          <div className="text-accent text-[83.03px] font-extrabold ">
+          <div className="animate-rise text-accent text-[83.03px] font-extrabold ">
             <span className="text-[83px] font-extrabold text-white">KSHC </span>
             <span className="text-[83px] font-extrabold text-accent">
               Logistic
             </span>
           </div>
-          <div className="text-white text-[20.758px] opacity-80 mt-[24.909px]">
+          <div className="animate-rise-1 text-white text-[20.758px] opacity-80 mt-[24.909px]">
             Trusted provider of premium logistics solutions in Sudan.
           </div>
         </div>
@@ -66,7 +67,7 @@ export default async function AboutPage({
       {/* About */}
       <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 lg:flex-row lg:items-start lg:gap-24">
-          <div className="flex-1">
+          <Reveal className="flex-1">
             <h1 className="text-4xl font-extrabold text-brand sm:text-5xl">
               {t("title")}
             </h1>
@@ -81,7 +82,7 @@ export default async function AboutPage({
               {STATS.map((key) => (
                 <div
                   key={key}
-                  className="rounded-2xl w-60 shrink-0 border border-line bg-white p-6 shadow-sm"
+                  className="rounded-2xl w-60 shrink-0 border border-line bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <dt className="text-sm font-semibold text-muted-dark">
                     {t(`stats.${key}.label`)}
@@ -92,8 +93,8 @@ export default async function AboutPage({
                 </div>
               ))}
             </dl>
-          </div>
-          <div className="w-full max-w-md shrink-0 lg:w-2/5">
+          </Reveal>
+          <Reveal className="w-full max-w-md shrink-0 lg:w-2/5">
             <Image
               src="/images/about-illustration.png"
               alt=""
@@ -101,14 +102,14 @@ export default async function AboutPage({
               height={416}
               className="w-full"
             />
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Vision */}
       <section className="bg-brand px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 lg:flex-row lg:gap-24">
-          <div className="flex-1 text-white">
+          <Reveal className="flex-1 text-white">
             <h2 className="text-3xl font-extrabold  sm:text-4xl">
               {t("vision.title")
                 .split(" ")
@@ -119,8 +120,8 @@ export default async function AboutPage({
                 ))}
             </h2>
             <p className="mt-6 text-lg leading-[29px]">{t("vision.body")}</p>
-          </div>
-          <div className="w-full max-w-lg shrink-0 lg:w-2/5">
+          </Reveal>
+          <Reveal className="w-full max-w-lg shrink-0 lg:w-2/5">
             <Image
               src="/images/about-vision.png"
               alt={t("vision.imageAlt")}
@@ -128,14 +129,14 @@ export default async function AboutPage({
               height={333}
               className="w-full rounded-2xl object-cover"
             />
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Mission */}
       <section className="bg-hero-sub px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 lg:flex-row lg:gap-24">
-          <div className="order-2 w-full max-w-lg shrink-0 lg:order-1 lg:w-2/5">
+          <Reveal className="order-2 w-full max-w-lg shrink-0 lg:order-1 lg:w-2/5">
             <Image
               src="/images/about-mission.png"
               alt={t("mission.imageAlt")}
@@ -143,8 +144,8 @@ export default async function AboutPage({
               height={333}
               className="w-full rounded-2xl object-cover"
             />
-          </div>
-          <div className="order-1 flex-1 lg:order-2">
+          </Reveal>
+          <Reveal className="order-1 flex-1 lg:order-2">
             <h2 className="text-3xl font-extrabold text-brand sm:text-4xl">
               {t("mission.title")
                 .split(" ")
@@ -157,7 +158,7 @@ export default async function AboutPage({
             <p className="mt-6 text-lg leading-[29px] text-ink/80">
               {t("mission.body")}
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -167,13 +168,16 @@ export default async function AboutPage({
           <h2 className="text-3xl font-extrabold text-brand sm:text-4xl">
             {t("objectives.title")}
           </h2>
-          <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <Reveal
+            stagger
+            className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+          >
             {OBJECTIVES.map(({ key, Icon }) => (
               <article
                 key={key}
-                className="flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition-shadow hover:shadow-lg"
+                className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex size-12 items-center justify-center rounded-full bg-accent">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
                   <Icon className="size-6 " aria-hidden />
                 </div>
                 <div>
@@ -186,7 +190,7 @@ export default async function AboutPage({
                 </div>
               </article>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
     </>

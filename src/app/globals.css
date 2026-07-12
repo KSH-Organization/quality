@@ -37,3 +37,85 @@ body {
   font-family: var(--font-cairo), var(--font-inter), ui-sans-serif, system-ui,
     sans-serif;
 }
+
+/* ---------------------------------------------------------------------------
+   Motion
+   - All animations use transform/opacity only (compositor-friendly, no CLS).
+   - Everything is gated behind prefers-reduced-motion: no-preference.
+   - Scroll reveals: the <Reveal> component adds [data-reveal] AFTER hydration
+     and only to elements below the fold, so content is always visible for
+     crawlers, no-JS users, and above-the-fold paint (LCP unaffected).
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Hero entrance (pure CSS, runs on first paint) */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .animate-rise {
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-rise-1 {
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+  }
+
+  .animate-rise-2 {
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+  }
+
+  .animate-rise-3 {
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both;
+  }
+
+  /* Scroll reveal (single block) */
+  [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+  }
+
+  [data-reveal][data-revealed] {
+    animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Scroll reveal (staggered children, e.g. card grids) */
+  [data-reveal-stagger]:not([data-revealed])>* {
+    opacity: 0;
+  }
+
+  [data-reveal-stagger][data-revealed]>* {
+    animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  [data-reveal-stagger][data-revealed]>*:nth-child(2) {
+    animation-delay: 90ms;
+  }
+
+  [data-reveal-stagger][data-revealed]>*:nth-child(3) {
+    animation-delay: 180ms;
+  }
+
+  [data-reveal-stagger][data-revealed]>*:nth-child(4) {
+    animation-delay: 270ms;
+  }
+
+  [data-reveal-stagger][data-revealed]>*:nth-child(5) {
+    animation-delay: 360ms;
+  }
+
+  [data-reveal-stagger][data-revealed]>*:nth-child(6) {
+    animation-delay: 450ms;
+  }
+
+  [data-reveal-stagger][data-revealed]>*:nth-child(n + 7) {
+    animation-delay: 540ms;
+  }
+}

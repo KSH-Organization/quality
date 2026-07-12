@@ -67,6 +67,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={locale === "ar" ? "rtl" : "ltr"}
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${cairo.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased">

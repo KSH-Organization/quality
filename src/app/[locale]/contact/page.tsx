@@ -4,6 +4,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import ContactForm from "@/components/contact-form";
+import Reveal from "@/components/reveal";
 
 export async function generateMetadata({
   params,
@@ -30,10 +31,10 @@ export default async function ContactPage({
       {/* Hero */}
       <section className="bg-[#15052D] px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-          <h1 className="text-4xl font-extrabold text-white sm:text-6xl">
+          <h1 className="animate-rise text-4xl font-extrabold text-white sm:text-6xl">
             {t("hero.title")}
           </h1>
-          <p className="text-lg font-medium leading-[31px] text-hero-sub sm:text-xl">
+          <p className="animate-rise-1 text-lg font-medium leading-[31px] text-hero-sub sm:text-xl">
             {t("hero.subtitle")}
           </p>
         </div>
@@ -47,11 +48,11 @@ export default async function ContactPage({
             <h2 className="text-3xl font-extrabold text-brand">
               {t("info.title")}
             </h2>
-            <ul className="mt-8 space-y-6">
+            <Reveal as="ul" stagger className="mt-8 space-y-6">
               {INFO.map(({ key, icon: Icon }) => (
                 <li
                   key={key}
-                  className="flex items-center gap-4 rounded-2xl border border-line p-5"
+                  className="flex items-center gap-4 rounded-2xl border border-line p-5 transition duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-accent text-white">
                     <Icon className="size-5" aria-hidden />
@@ -69,11 +70,11 @@ export default async function ContactPage({
                   </div>
                 </li>
               ))}
-            </ul>
+            </Reveal>
           </div>
 
           {/* Form card */}
-          <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-10">
+          <Reveal className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-10">
             <h2 className="text-2xl font-extrabold text-brand">
               {t("form.title")}
             </h2>
@@ -81,7 +82,7 @@ export default async function ContactPage({
             <div className="mt-8">
               <ContactForm />
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
     </>

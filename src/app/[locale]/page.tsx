@@ -17,6 +17,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata, SITE_URL } from "@/lib/seo";
 import SectionHeader from "@/components/section-header";
+import Reveal from "@/components/reveal";
 
 export async function generateMetadata({
   params,
@@ -85,26 +86,26 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         />
         <div className="absolute inset-0 bg-brand-dark/65" aria-hidden />
         <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-          <span className="rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white">
+          <span className="animate-rise rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white">
             {t("hero.badge")}
           </span>
-          <h1 className="text-5xl font-extrabold text-white sm:text-6xl lg:text-7xl">
+          <h1 className="animate-rise-1 text-5xl font-extrabold text-white sm:text-6xl lg:text-7xl">
             {t("hero.titleA")}{" "}
             <span className="text-accent">{t("hero.titleB")}</span>
           </h1>
-          <p className="text-lg font-semibold leading-relaxed text-hero-sub sm:text-xl">
+          <p className="animate-rise-2 text-lg font-semibold leading-relaxed text-hero-sub sm:text-xl">
             {t("hero.subtitle")}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="animate-rise-3 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/services"
-              className="rounded bg-accent px-8 py-3.5 text-lg font-bold text-white transition-opacity hover:opacity-90"
+              className="rounded bg-accent px-8 py-3.5 text-lg font-bold text-white transition hover:opacity-90 active:scale-95"
             >
               {t("hero.viewServices")}
             </Link>
             <Link
               href="/about"
-              className="rounded border border-accent px-8 py-3.5 text-base font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
+              className="rounded border border-accent px-8 py-3.5 text-base font-semibold text-accent transition-colors hover:bg-accent hover:text-white active:scale-95"
             >
               {t("hero.ourStory")}
             </Link>
@@ -119,13 +120,16 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             label={t("capabilities.label")}
             title={t("capabilities.title")}
           />
-          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2">
+          <Reveal
+            stagger
+            className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2"
+          >
             {SERVICES.map(({ key, Icon }) => (
               <article
                 key={key}
-                className="flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-8 transition-shadow hover:shadow-lg"
+                className="group flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex size-12 items-center justify-center rounded-xl bg-brand">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
                   <Icon className="size-6 text-white" aria-hidden />
                 </div>
                 <h3 className="text-2xl font-bold text-ink">
@@ -133,14 +137,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 </h3>
                 <Link
                   href="/services"
-                  className="mt-auto flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
+                  className="group/link mt-auto flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
                 >
                   {t("capabilities.explore")}
-                  <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
+                  <ArrowRight
+                    className="size-4 transition-transform duration-300 group-hover/link:translate-x-1 rtl:-scale-x-100 rtl:group-hover/link:-translate-x-1"
+                    aria-hidden
+                  />
                 </Link>
               </article>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -151,7 +158,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             label={t("clients.label")}
             title={t("clients.title")}
           />
-          <div className="mt-34 flex flex-wrap items-center justify-center gap-12 lg:justify-between">
+          <Reveal
+            stagger
+            className="mt-34 flex flex-wrap items-center justify-center gap-12 lg:justify-between"
+          >
             {CLIENTS.map(({ key, src, w, h }) => (
               <Image
                 key={key}
@@ -159,17 +169,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 alt={t(`clients.${key}`)}
                 width={w}
                 height={h}
-                className="h-16 w-auto object-contain sm:h-20"
+                className="h-16 w-auto object-contain grayscale transition duration-300 hover:grayscale-0 sm:h-20"
               />
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Different / Edge */}
       <section className="bg-line px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-30">
         <div className="mx-auto flex max-w-7xl flex-col items-start gap-16 lg:flex-row lg:items-center lg:gap-20">
-          <div className="flex flex-1 flex-col gap-8">
+          <Reveal className="flex flex-1 flex-col gap-8">
             <SectionHeader
               label={t("edge.label")}
               title={`${t("edge.titleA")} ${t("edge.titleB")}${t("edge.titleC")}`}
@@ -182,16 +192,19 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             </div>
             <Link
               href="/about"
-              className="w-fit rounded bg-accent px-8 py-3.5 text-lg font-bold text-white transition-opacity hover:opacity-90"
+              className="w-fit rounded bg-accent px-8 py-3.5 text-lg font-bold text-white transition hover:opacity-90 active:scale-95"
             >
               {t("edge.aboutUs")}
             </Link>
-          </div>
-          <div className="grid w-full flex-1 grid-cols-1 gap-6 sm:grid-cols-3">
+          </Reveal>
+          <Reveal
+            stagger
+            className="grid w-full flex-1 grid-cols-1 gap-6 sm:grid-cols-3"
+          >
             {STATS.map(({ key, Icon }) => (
               <div
                 key={key}
-                className="flex flex-col gap-4 rounded-2xl border border-line-dark bg-brand p-8"
+                className="flex flex-col gap-4 rounded-2xl border border-line-dark bg-brand p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="flex size-12 items-center justify-center rounded-3xl bg-accent shadow-lg shadow-accent/20">
                   <Icon className="size-6 text-brand" aria-hidden />
@@ -207,7 +220,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 </div>
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
     </>

@@ -5,6 +5,7 @@ import { Mail, Phone } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import CareersForm from "@/components/careers-form";
+import Reveal from "@/components/reveal";
 
 export async function generateMetadata({
   params,
@@ -35,10 +36,10 @@ export default async function CareersPage({
         />
         <div className="absolute inset-0 bg-brand-dark/50" aria-hidden />
         <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center gap-y-6">
-          <span className="rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white ">
+          <span className="animate-rise rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white ">
             {t("badge")}
           </span>
-          <h1 className="text-7xl font-extrabold text-white sm:text-6xl">
+          <h1 className="animate-rise-1 text-7xl font-extrabold text-white sm:text-6xl">
             {tMeta("careers.title")
               .split(" ")
               .map((word, i) => (
@@ -47,7 +48,7 @@ export default async function CareersPage({
                 </span>
               ))}
           </h1>
-          <p className=" text-lg font-semibold leading-[normal] text-hero-sub sm:text-xl">
+          <p className="animate-rise-2 text-lg font-semibold leading-[normal] text-hero-sub sm:text-xl">
             {tMeta("careers.description")}
           </p>
         </div>
@@ -57,7 +58,7 @@ export default async function CareersPage({
       <section className="bg-brand px-4 py-16 sm:px-6 lg:px-[5.5556vw] lg:py-24">
         <div className="mx-auto max-w-7xl">
           {/* Heading row */}
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-16">
+          <Reveal className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-16">
             <div className="flex-1">
               <p className="text-sm font-bold uppercase tracking-wide text-accent">
                 {t("label")}
@@ -82,12 +83,12 @@ export default async function CareersPage({
                 {t("heading")}
               </h2>
             </div>
-          </div>
+          </Reveal>
 
           {/* Contact + form row */}
           <div className="mt-16 flex flex-col gap-12 lg:mt-24 lg:flex-row lg:gap-20">
             {/* Contact column */}
-            <div className="w-full shrink-0 lg:w-80">
+            <Reveal className="w-full shrink-0 lg:w-80">
               <h3 className="text-xs font-bold uppercase tracking-wide text-accent">
                 {t("office.label")}
               </h3>
@@ -105,7 +106,7 @@ export default async function CareersPage({
                 <li>
                   <a
                     href={`tel:${t("getInTouch.phone").replace(/\s/g, "")}`}
-                    className="flex items-center gap-3 font-semibold text-white hover:text-accent"
+                    className="flex items-center gap-3 font-semibold text-white transition-colors hover:text-accent"
                   >
                     <Phone
                       className="size-4 shrink-0 text-accent"
@@ -117,19 +118,19 @@ export default async function CareersPage({
                 <li>
                   <a
                     href={`mailto:${t("getInTouch.email")}`}
-                    className="flex items-center gap-3 font-semibold text-white hover:text-accent"
+                    className="flex items-center gap-3 font-semibold text-white transition-colors hover:text-accent"
                   >
                     <Mail className="size-4 shrink-0 text-accent" aria-hidden />
                     {t("getInTouch.email")}
                   </a>
                 </li>
               </ul>
-            </div>
+            </Reveal>
 
             {/* Form column */}
-            <div className="flex-1">
+            <Reveal className="flex-1">
               <CareersForm />
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>

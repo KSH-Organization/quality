@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   Truck,
@@ -13,6 +12,7 @@ import {
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import SectionHeader from "@/components/section-header";
+import Reveal from "@/components/reveal";
 
 export async function generateMetadata({
   params,
@@ -52,10 +52,10 @@ export default async function ServicesPage({
         />
         <div className="absolute inset-0 bg-brand-dark/65" aria-hidden />
         <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center gap-y-6">
-          <span className="rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white ">
+          <span className="animate-rise rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white ">
             {t("badge")}
           </span>
-          <h1 className="text-7xl font-extrabold text-white sm:text-6xl">
+          <h1 className="animate-rise-1 text-7xl font-extrabold text-white sm:text-6xl">
             {tMeta("services.title")
               .split(" ")
               .map((word, i) => (
@@ -64,7 +64,7 @@ export default async function ServicesPage({
                 </span>
               ))}
           </h1>
-          <p className=" text-lg font-semibold leading-[normal] text-hero-sub sm:text-xl">
+          <p className="animate-rise-2 text-lg font-semibold leading-[normal] text-hero-sub sm:text-xl">
             {tMeta("services.description")}
           </p>
         </div>
@@ -74,13 +74,16 @@ export default async function ServicesPage({
       <section className="bg-white px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto max-w-7xl">
           <SectionHeader label={t("label")} title={t("title")} />
-          <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">
+          <Reveal
+            stagger
+            className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2"
+          >
             {SERVICES.map(({ key, Icon }) => (
               <article
                 key={key}
-                className="flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition-shadow hover:shadow-lg"
+                className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex size-12 items-center justify-center rounded-xl bg-brand">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
                   <Icon className="size-6 text-accent" aria-hidden />
                 </div>
                 <div>
@@ -93,7 +96,7 @@ export default async function ServicesPage({
                 </div>
               </article>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
     </>

@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
+import Reveal from "@/components/reveal";
 
 export async function generateMetadata({
   params,
@@ -37,10 +38,10 @@ export default async function NewsEventsPage({
       {/* Hero */}
       <section className="bg-brand px-4 py-24 sm:px-6 lg:px-[5.5556vw] lg:py-36">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-          <span className="rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white ">
+          <span className="animate-rise rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-white ">
             {t("hero.badge")}
           </span>
-          <h1 className="text-4xl font-extrabold text-white sm:text-6xl">
+          <h1 className="animate-rise-1 text-4xl font-extrabold text-white sm:text-6xl">
             {t("hero.title")
               .split(" ")
               .map((word, i) => (
@@ -49,7 +50,7 @@ export default async function NewsEventsPage({
                 </span>
               ))}
           </h1>
-          <p className="text-lg font-medium leading-[normal] text-hero-sub sm:text-xl">
+          <p className="animate-rise-2 text-lg font-medium leading-[normal] text-hero-sub sm:text-xl">
             {t("hero.subtitle")}
           </p>
         </div>
@@ -64,19 +65,24 @@ export default async function NewsEventsPage({
           <h2 className="mt-3 text-3xl font-extrabold text-brand sm:text-4xl">
             {t("newsSection.title")}
           </h2>
-          <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-2">
+          <Reveal
+            stagger
+            className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-2"
+          >
             {ARTICLES.map(({ key, image }) => (
               <article
                 key={key}
-                className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 transition-shadow hover:shadow-lg"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <Image
-                  src={image}
-                  alt={t(`articles.${key}.title`)}
-                  width={602}
-                  height={180}
-                  className="h-44 w-full rounded-xl object-cover"
-                />
+                <div className="overflow-hidden rounded-xl">
+                  <Image
+                    src={image}
+                    alt={t(`articles.${key}.title`)}
+                    width={602}
+                    height={180}
+                    className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
                 <span className="mt-4 w-fit rounded bg-accent px-2 py-1 text-xs font-semibold text-white">
                   {t(`articles.${key}.date`)}
                 </span>
@@ -88,14 +94,17 @@ export default async function NewsEventsPage({
                 </p>
                 <a
                   href="#"
-                  className="mt-5 flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
+                  className="group/link mt-5 flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
                 >
                   {t("newsSection.readMore")}
-                  <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
+                  <ArrowRight
+                    className="size-4 transition-transform duration-300 group-hover/link:translate-x-1 rtl:-scale-x-100 rtl:group-hover/link:-translate-x-1"
+                    aria-hidden
+                  />
                 </a>
               </article>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -108,19 +117,24 @@ export default async function NewsEventsPage({
           <h2 className="mt-3 text-3xl font-extrabold text-brand sm:text-4xl">
             {t("eventsSection.title")}
           </h2>
-          <div className="mt-12 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal
+            stagger
+            className="mt-12 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {EVENTS.map(({ key, image }) => (
               <article
                 key={key}
-                className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 transition-shadow hover:shadow-lg"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <Image
-                  src={image}
-                  alt={t(`events.${key}.title`)}
-                  width={374}
-                  height={200}
-                  className="h-48 w-full rounded-xl object-cover"
-                />
+                <div className="overflow-hidden rounded-xl">
+                  <Image
+                    src={image}
+                    alt={t(`events.${key}.title`)}
+                    width={374}
+                    height={200}
+                    className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
                 <span className="mt-4 w-fit rounded bg-accent px-2 py-1 text-xs font-semibold text-white">
                   {t(`events.${key}.category`)}
                 </span>
@@ -133,7 +147,7 @@ export default async function NewsEventsPage({
                 </p>
               </article>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
     </>
