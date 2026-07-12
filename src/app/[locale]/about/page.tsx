@@ -39,7 +39,7 @@ export default async function AboutPage({
   const t = await getTranslations("about");
 
   return (
-    <>
+    <div className="overflow-x-clip">
       {/* Hero banner */}
       <section className="relative h-80 overflow-hidden sm:h-110 lg:h-160">
         <Image
@@ -52,13 +52,11 @@ export default async function AboutPage({
         />
         <div className="absolute inset-0 bg-brand-dark/40" aria-hidden />
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center">
-          <div className="animate-rise text-accent text-[83.03px] font-extrabold ">
-            <span className="text-[83px] font-extrabold text-white">KSHC </span>
-            <span className="text-[83px] font-extrabold text-accent">
-              Logistic
-            </span>
+          <div className="animate-rise text-accent text-4xl sm:text-6xl lg:text-[83px] font-extrabold">
+            <span className="text-white">KSHC </span>
+            <span className="text-accent">Logistic</span>
           </div>
-          <div className="animate-rise-1 text-white text-[20.758px] opacity-80 mt-[24.909px]">
+          <div className="animate-rise-1 text-white text-base sm:text-lg lg:text-[20.758px] opacity-80 mt-6 lg:mt-[24.909px]">
             Trusted provider of premium logistics solutions in Sudan.
           </div>
         </div>
@@ -78,11 +76,12 @@ export default async function AboutPage({
                   <p key={i}>{paragraph}</p>
                 ))}
             </div>
-            <dl className="mt-12 gap-6 md:flex md:flex-row flex-col justify-center ">
+            <div className="mt-12 flex flex-col gap-6 md:flex-row justify-center">
+              {" "}
               {STATS.map((key) => (
                 <div
                   key={key}
-                  className="rounded-2xl w-60 shrink-0 border border-line bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="rounded-2xl w-60 max-w-full min-w-0 border border-line bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <dt className="text-sm font-semibold text-muted-dark">
                     {t(`stats.${key}.label`)}
@@ -92,7 +91,7 @@ export default async function AboutPage({
                   </dd>
                 </div>
               ))}
-            </dl>
+            </div>
           </Reveal>
           <Reveal className="w-full max-w-md shrink-0 lg:w-2/5">
             <Image
@@ -177,7 +176,7 @@ export default async function AboutPage({
                 key={key}
                 className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
+                <div className="flex size-12 items-center justify-center rounded-full bg-accent transition-transform duration-300 group-hover:scale-110">
                   <Icon className="size-6 " aria-hidden />
                 </div>
                 <div>
@@ -193,6 +192,6 @@ export default async function AboutPage({
           </Reveal>
         </div>
       </section>
-    </>
+    </div>
   );
 }
