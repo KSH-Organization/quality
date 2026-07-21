@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+> Every text string and image on this site is editable from a MOHTAWA CMS
+> deployment, with the local `messages/*.json` / `public/images` as
+> fallback. See [`docs/CMS_INTEGRATION.md`](docs/CMS_INTEGRATION.md) for how
+> that's wired up and how to run the content seed.
+
 ## Getting Started
 
 First, run the development server:
