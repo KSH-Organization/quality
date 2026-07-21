@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import SmartImage from "@/components/smart-image";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import {
   Lightbulb,
   Star,
@@ -12,6 +16,7 @@ import {
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import Reveal from "@/components/reveal";
+import { resolveImage } from "@/lib/images";
 
 export async function generateMetadata({
   params,
@@ -37,13 +42,15 @@ export default async function AboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("about");
+  const messages = await getMessages();
+  const images = messages.images as Record<string, unknown> | undefined;
 
   return (
     <div className="overflow-x-clip">
       {/* Hero banner */}
       <section className="relative h-80 overflow-hidden sm:h-110 lg:h-160">
-        <Image
-          src="/images/hero-about.jpg"
+        <SmartImage
+          src={resolveImage(images, "hero-about", "/images/hero-about.jpg")}
           alt={t("heroAlt")}
           fill
           priority
@@ -53,11 +60,11 @@ export default async function AboutPage({
         <div className="absolute inset-0 bg-brand-dark/40" aria-hidden />
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center">
           <div className="animate-rise text-accent text-4xl sm:text-6xl lg:text-[83px] font-extrabold">
-            <span className="text-white">KSHC </span>
-            <span className="text-accent">Logistic</span>
+            <span className="text-white">{t("hero.titleA")} </span>
+            <span className="text-accent">{t("hero.titleB")}</span>
           </div>
           <div className="animate-rise-1 text-white text-base sm:text-lg lg:text-[20.758px] opacity-80 mt-6 lg:mt-[24.909px]">
-            Trusted provider of premium logistics solutions in Sudan.
+            {t("hero.tagline")}
           </div>
         </div>
       </section>
@@ -94,8 +101,12 @@ export default async function AboutPage({
             </div>
           </Reveal>
           <Reveal className="w-full max-w-md shrink-0 lg:w-2/5">
-            <Image
-              src="/images/about-illustration.png"
+            <SmartImage
+              src={resolveImage(
+                images,
+                "about-illustration",
+                "/images/about-illustration.png",
+              )}
               alt=""
               width={499}
               height={416}
@@ -121,8 +132,12 @@ export default async function AboutPage({
             <p className="mt-6 text-lg leading-[29px]">{t("vision.body")}</p>
           </Reveal>
           <Reveal className="w-full max-w-lg shrink-0 lg:w-2/5">
-            <Image
-              src="/images/about-vision.png"
+            <SmartImage
+              src={resolveImage(
+                images,
+                "about-vision",
+                "/images/about-vision.png",
+              )}
               alt={t("vision.imageAlt")}
               width={499}
               height={333}
@@ -136,8 +151,12 @@ export default async function AboutPage({
       <section className="bg-hero-sub px-4 py-20 sm:px-6 lg:px-[5.5556vw] lg:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 lg:flex-row lg:gap-24">
           <Reveal className="order-2 w-full max-w-lg shrink-0 lg:order-1 lg:w-2/5">
-            <Image
-              src="/images/about-mission.png"
+            <SmartImage
+              src={resolveImage(
+                images,
+                "about-mission",
+                "/images/about-mission.png",
+              )}
               alt={t("mission.imageAlt")}
               width={499}
               height={333}

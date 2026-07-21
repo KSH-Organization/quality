@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import SmartImage from "@/components/smart-image";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import {
   Truck,
   Package,
@@ -13,6 +17,7 @@ import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import SectionHeader from "@/components/section-header";
 import Reveal from "@/components/reveal";
+import { resolveImage } from "@/lib/images";
 
 export async function generateMetadata({
   params,
@@ -37,13 +42,19 @@ export default async function ServicesPage({
   setRequestLocale(locale);
   const t = await getTranslations("services");
   const tMeta = await getTranslations("meta");
+  const messages = await getMessages();
+  const images = messages.images as Record<string, unknown> | undefined;
 
   return (
     <>
       {/* Hero */}
       <section className="relative flex min-h-100 items-center justify-center overflow-hidden px-4 py-24 lg:min-h-150">
-        <Image
-          src="/images/hero-services.png"
+        <SmartImage
+          src={resolveImage(
+            images,
+            "hero-services",
+            "/images/hero-services.png",
+          )}
           alt=""
           fill
           priority

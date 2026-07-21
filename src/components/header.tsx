@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import SmartImage from "@/components/smart-image";
+import { useLocale, useMessages, useTranslations } from "next-intl";
 import { Menu, X, Globe } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
+import { resolveImage } from "@/lib/images";
 
 const NAV_ITEMS = [
   { key: "home", href: "/" },
@@ -20,6 +21,7 @@ export default function Header() {
   const locale = useLocale();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const images = useMessages().images as Record<string, unknown> | undefined;
 
   const otherLocale = locale === "ar" ? "en" : "ar";
 
@@ -31,8 +33,8 @@ export default function Header() {
           className="flex shrink-0 items-center"
           onClick={() => setOpen(false)}
         >
-          <Image
-            src="/images/logo.png"
+          <SmartImage
+            src={resolveImage(images, "logo", "/images/logo.png")}
             alt="KSHC Logistic"
             width={135}
             height={79}

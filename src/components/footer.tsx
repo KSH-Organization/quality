@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useTranslations } from "next-intl";
+import SmartImage from "@/components/smart-image";
+import { useMessages, useTranslations } from "next-intl";
 import { Send } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import {
@@ -9,11 +9,13 @@ import {
   LinkedinIcon,
   TwitterIcon,
 } from "@/components/social-icons";
+import { resolveImage } from "@/lib/images";
 
 export default function Footer() {
   const t = useTranslations("footer");
   const pathname = usePathname();
   const year = new Date().getFullYear();
+  const images = useMessages().images as Record<string, unknown> | undefined;
 
   // The careers page ends with a dark apply section, so the footer switches
   // to a light theme there to keep visual separation (matches the design).
@@ -30,8 +32,8 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-[5.5556vw] lg:py-20">
         <div className="flex flex-col gap-12 lg:flex-row lg:justify-between">
           <div className="max-w-md">
-            <Image
-              src="/images/logo.png"
+            <SmartImage
+              src={resolveImage(images, "logo", "/images/logo.png")}
               alt="KSHC Logistic"
               width={135}
               height={80}

@@ -107,6 +107,11 @@
   },
   "about": {
     "heroAlt": "Container ship at sea — KSHC Logistic",
+    "hero": {
+      "titleA": "KSHC",
+      "titleB": "Logistic",
+      "tagline": "Trusted provider of premium logistics solutions in Sudan."
+    },
     "title": "About Us",
     "body": "KSHC Logistic is an investment of the Kuwait-Sudan Holding Company, established to be the trusted provider of premium logistics solutions in Sudan. We are the only company offering comprehensive services in supply chains with high professionalism and advanced technology, backed by the largest and most advanced storage facilities in the country.\n\nWe take pride in owning the largest and most advanced storage facilities in Sudan, designed to meet the highest international standards in quality and safety. Our warehouses are equipped with cutting-edge technology to ensure the perfect environment for all types of goods.\n\nWith over 20,000 square meters of storage space and stacking heights exceeding 17 meters, we offer flexible and innovative solutions that cater to every type of product in varying sizes, weights, and lengths. Our storage units range from dry, refrigerated, frozen, indoor, and outdoor spaces - all in one place, designed to meet your needs.",
     "stats": {

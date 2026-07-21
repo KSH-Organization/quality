@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import SmartImage from "@/components/smart-image";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import { Mail, Phone } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import CareersForm from "@/components/careers-form";
 import Reveal from "@/components/reveal";
+import { resolveImage } from "@/lib/images";
 
 export async function generateMetadata({
   params,
@@ -21,13 +26,15 @@ export default async function CareersPage({
   setRequestLocale(locale);
   const t = await getTranslations("careers");
   const tMeta = await getTranslations("meta");
+  const messages = await getMessages();
+  const images = messages.images as Record<string, unknown> | undefined;
 
   return (
     <>
       {/* Hero */}
       <section className="relative flex h-80 items-center justify-center overflow-hidden w-full sm:h-105 lg:h-130">
-        <Image
-          src="/images/hero-careers.png"
+        <SmartImage
+          src={resolveImage(images, "hero-careers", "/images/hero-careers.png")}
           alt={t("tagline")}
           fill
           priority

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import SmartImage from "@/components/smart-image";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import {
   Truck,
   Package,
@@ -18,6 +18,7 @@ import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata, SITE_URL } from "@/lib/seo";
 import SectionHeader from "@/components/section-header";
 import Reveal from "@/components/reveal";
+import { resolveImage } from "@/lib/images";
 
 export async function generateMetadata({
   params,
@@ -36,9 +37,9 @@ const SERVICES = [
 ] as const;
 
 const CLIENTS = [
-  { key: "bank", src: "/images/client-bank.png", w: 479, h: 129 },
-  { key: "zain", src: "/images/client-zain.jpg", w: 946, h: 268 },
-  { key: "samil", src: "/images/client-samil.png", w: 329, h: 198 },
+  { key: "bank", imageKey: "client-bank", src: "/images/client-bank.png", w: 479, h: 129 },
+  { key: "zain", imageKey: "client-zain", src: "/images/client-zain.jpg", w: 946, h: 268 },
+  { key: "samil", imageKey: "client-samil", src: "/images/client-samil.png", w: 329, h: 198 },
 ] as const;
 
 const STATS = [
@@ -52,13 +53,18 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   setRequestLocale(locale);
   const t = await getTranslations("home");
   const tMeta = await getTranslations("meta");
+  const messages = await getMessages();
+  const images = messages.images as Record<string, unknown> | undefined;
+  const logoSrc = resolveImage(images, "logo", "/images/logo.png");
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "KSHC Logistic",
     url: SITE_URL,
-    logo: `${SITE_URL}/images/logo.png`,
+    logo: logoSrc.startsWith("http") || logoSrc.startsWith("data:")
+      ? logoSrc
+      : `${SITE_URL}${logoSrc}`,
     description: tMeta("home.description"),
     address: {
       "@type": "PostalAddress",
@@ -76,8 +82,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       {/* Hero */}
       <section className="relative flex min-h-150 items-center justify-center overflow-hidden px-4 py-24 lg:min-h-185">
-        <Image
-          src="/images/hero-home.png"
+        <SmartImage
+          src={resolveImage(images, "hero-home", "/images/hero-home.png")}
           alt=""
           fill
           priority
@@ -162,10 +168,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             stagger
             className="mt-34 flex flex-wrap items-center justify-center gap-12 lg:justify-between"
           >
-            {CLIENTS.map(({ key, src, w, h }) => (
-              <Image
+            {CLIENTS.map(({ key, imageKey, src, w, h }) => (
+              <SmartImage
                 key={key}
-                src={src}
+                src={resolveImage(images, imageKey, src)}
                 alt={t(`clients.${key}`)}
                 width={w}
                 height={h}
