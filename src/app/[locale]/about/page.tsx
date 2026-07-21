@@ -12,6 +12,7 @@ import {
   TrendingUp,
   Users,
   Earth,
+  type LucideIcon,
 } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
@@ -25,16 +26,18 @@ export async function generateMetadata({
   return buildPageMetadata(locale as Locale, "about");
 }
 
-const OBJECTIVES = [
-  { key: "innovation", Icon: Lightbulb },
-  { key: "quality", Icon: Star },
-  { key: "safety", Icon: Shield },
-  { key: "expansion", Icon: TrendingUp },
-  { key: "people", Icon: Users },
-  { key: "transfer", Icon: Earth },
-] as const;
+// Icons stay in code, matched to each CMS objective row by its `key`.
+const OBJECTIVE_ICONS: Record<string, LucideIcon> = {
+  innovation: Lightbulb,
+  quality: Star,
+  safety: Shield,
+  expansion: TrendingUp,
+  people: Users,
+  transfer: Earth,
+};
 
-const STATS = ["space", "origin", "experience"] as const;
+type StatRow = { key: string; label: string; value: string };
+type ObjectiveRow = { key: string; title: string; body: string };
 
 export default async function AboutPage({
   params,
@@ -44,6 +47,8 @@ export default async function AboutPage({
   const t = await getTranslations("about");
   const messages = await getMessages();
   const images = messages.images as Record<string, unknown> | undefined;
+  const stats = t.raw("stats") as StatRow[];
+  const objectives = t.raw("objectives.items") as ObjectiveRow[];
 
   return (
     <div className="overflow-x-clip">
@@ -85,16 +90,16 @@ export default async function AboutPage({
             </div>
             <div className="mt-12 flex flex-col gap-6 md:flex-row justify-center">
               {" "}
-              {STATS.map((key) => (
+              {stats.map(({ key, label, value }) => (
                 <div
                   key={key}
                   className="rounded-2xl w-60 max-w-full min-w-0 border border-line bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <dt className="text-sm font-semibold text-muted-dark">
-                    {t(`stats.${key}.label`)}
+                    {label}
                   </dt>
                   <dd className="mt-2 text-2xl font-extrabold text-brand sm:text-3xl">
-                    {t(`stats.${key}.value`)}
+                    {value}
                   </dd>
                 </div>
               ))}
@@ -190,24 +195,23 @@ export default async function AboutPage({
             stagger
             className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
           >
-            {OBJECTIVES.map(({ key, Icon }) => (
-              <article
-                key={key}
-                className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="flex size-12 items-center justify-center rounded-full bg-accent transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="size-6 " aria-hidden />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-ink">
-                    {t(`objectives.items.${key}.title`)}
-                  </h3>
-                  <p className="mt-3 leading-[22px] text-muted-dark">
-                    {t(`objectives.items.${key}.body`)}
-                  </p>
-                </div>
-              </article>
-            ))}
+            {objectives.map(({ key, title, body }) => {
+              const Icon = OBJECTIVE_ICONS[key] ?? Lightbulb;
+              return (
+                <article
+                  key={key}
+                  className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex size-12 items-center justify-center rounded-full bg-accent transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="size-6 " aria-hidden />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-ink">{title}</h3>
+                    <p className="mt-3 leading-[22px] text-muted-dark">{body}</p>
+                  </div>
+                </article>
+              );
+            })}
           </Reveal>
         </div>
       </section>

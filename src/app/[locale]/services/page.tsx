@@ -12,6 +12,7 @@ import {
   Layers,
   FileText,
   Shield,
+  type LucideIcon,
 } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
@@ -26,14 +27,17 @@ export async function generateMetadata({
   return buildPageMetadata(locale as Locale, "services");
 }
 
-const SERVICES = [
-  { key: "purchasing", Icon: Truck },
-  { key: "shipping", Icon: Package },
-  { key: "storage", Icon: Warehouse },
-  { key: "integrated", Icon: Layers },
-  { key: "archiving", Icon: FileText },
-  { key: "quality", Icon: Shield },
-] as const;
+// Icons stay in code, matched to each CMS list row by its `key`.
+const SERVICE_ICONS: Record<string, LucideIcon> = {
+  purchasing: Truck,
+  shipping: Package,
+  storage: Warehouse,
+  integrated: Layers,
+  archiving: FileText,
+  quality: Shield,
+};
+
+type ServiceRow = { key: string; title: string; body: string };
 
 export default async function ServicesPage({
   params,
@@ -44,6 +48,7 @@ export default async function ServicesPage({
   const tMeta = await getTranslations("meta");
   const messages = await getMessages();
   const images = messages.images as Record<string, unknown> | undefined;
+  const items = t.raw("items") as ServiceRow[];
 
   return (
     <>
@@ -89,24 +94,25 @@ export default async function ServicesPage({
             stagger
             className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2"
           >
-            {SERVICES.map(({ key, Icon }) => (
-              <article
-                key={key}
-                className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="size-6 text-accent" aria-hidden />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-ink">
-                    {t(`items.${key}.title`)}
-                  </h2>
-                  <p className="mt-4 leading-[normal] text-muted-dark">
-                    {t(`items.${key}.body`)}
-                  </p>
-                </div>
-              </article>
-            ))}
+            {items.map(({ key, title, body }) => {
+              const Icon = SERVICE_ICONS[key] ?? Shield;
+              return (
+                <article
+                  key={key}
+                  className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="size-6 text-accent" aria-hidden />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-ink">{title}</h2>
+                    <p className="mt-4 leading-[normal] text-muted-dark">
+                      {body}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
           </Reveal>
         </div>
       </section>

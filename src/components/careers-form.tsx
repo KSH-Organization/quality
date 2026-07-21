@@ -4,10 +4,11 @@ import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Paperclip, CheckCircle2 } from "lucide-react";
 
-const JOB_KEYS = ["logistics", "warehouse", "procurement", "it"] as const;
+type JobRow = { key: string; title: string };
 
 export default function CareersForm() {
   const t = useTranslations("careers.form");
+  const jobs = t.raw("jobs") as JobRow[];
   const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -43,9 +44,9 @@ export default function CareersForm() {
           <option value="" disabled className="text-ink">
             {t("availableJobs")}
           </option>
-          {JOB_KEYS.map((key) => (
+          {jobs.map(({ key, title }) => (
             <option key={key} value={key} className="text-ink">
-              {t(`jobs.${key}`)}
+              {title}
             </option>
           ))}
         </select>

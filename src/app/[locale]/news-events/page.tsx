@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import SmartImage from "@/components/smart-image";
-import {
-  getMessages,
-  getTranslations,
-  setRequestLocale,
-} from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import Reveal from "@/components/reveal";
-import { resolveImage } from "@/lib/images";
 
 export async function generateMetadata({
   params,
@@ -18,18 +13,45 @@ export async function generateMetadata({
   return buildPageMetadata(locale as Locale, "news");
 }
 
-const ARTICLES = [
-  { key: "a1", imageKey: "news-1", image: "/images/news-1.png" },
-  { key: "a2", imageKey: "news-2", image: "/images/news-2.png" },
-  { key: "a3", imageKey: "news-3", image: "/images/news-3.png" },
-  { key: "a4", imageKey: "news-4", image: "/images/news-4.png" },
-] as const;
+// Local fallback images, matched to a row by its `key`, used when the CMS row
+// has no uploaded image of its own.
+const NEWS_IMAGES: Record<string, string> = {
+  a1: "/images/news-1.png",
+  a2: "/images/news-2.png",
+  a3: "/images/news-3.png",
+  a4: "/images/news-4.png",
+};
+const EVENT_IMAGES: Record<string, string> = {
+  e1: "/images/event-1.png",
+  e2: "/images/event-2.png",
+  e3: "/images/event-3.png",
+};
 
-const EVENTS = [
-  { key: "e1", imageKey: "event-1", image: "/images/event-1.png" },
-  { key: "e2", imageKey: "event-2", image: "/images/event-2.png" },
-  { key: "e3", imageKey: "event-3", image: "/images/event-3.png" },
-] as const;
+type ArticleRow = {
+  key: string;
+  date: string;
+  title: string;
+  body: string;
+  image?: string;
+};
+type EventRow = {
+  key: string;
+  category: string;
+  title: string;
+  date: string;
+  image?: string;
+};
+
+/** CMS-uploaded image if present, else the local fallback for this key. */
+function rowImage(
+  image: string | undefined,
+  fallbacks: Record<string, string>,
+  key: string,
+): string {
+  return typeof image === "string" && image.trim() !== ""
+    ? image
+    : (fallbacks[key] ?? "");
+}
 
 export default async function NewsEventsPage({
   params,
@@ -37,8 +59,8 @@ export default async function NewsEventsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("news");
-  const messages = await getMessages();
-  const images = messages.images as Record<string, unknown> | undefined;
+  const articles = t.raw("articles") as ArticleRow[];
+  const events = t.raw("events") as EventRow[];
 
   return (
     <>
@@ -76,29 +98,25 @@ export default async function NewsEventsPage({
             stagger
             className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-2"
           >
-            {ARTICLES.map(({ key, imageKey, image }) => (
+            {articles.map(({ key, date, title, body, image }) => (
               <article
                 key={key}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="overflow-hidden rounded-xl">
                   <SmartImage
-                    src={resolveImage(images, imageKey, image)}
-                    alt={t(`articles.${key}.title`)}
+                    src={rowImage(image, NEWS_IMAGES, key)}
+                    alt={title}
                     width={602}
                     height={180}
                     className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 <span className="mt-4 w-fit rounded bg-accent px-2 py-1 text-xs font-semibold text-white">
-                  {t(`articles.${key}.date`)}
+                  {date}
                 </span>
-                <h3 className="mt-4 text-xl font-bold text-ink">
-                  {t(`articles.${key}.title`)}
-                </h3>
-                <p className="mt-3 leading-[22px] text-muted-dark">
-                  {t(`articles.${key}.body`)}
-                </p>
+                <h3 className="mt-4 text-xl font-bold text-ink">{title}</h3>
+                <p className="mt-3 leading-[22px] text-muted-dark">{body}</p>
                 <a
                   href="#"
                   className="group/link mt-5 flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
@@ -128,29 +146,27 @@ export default async function NewsEventsPage({
             stagger
             className="mt-12 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3"
           >
-            {EVENTS.map(({ key, imageKey, image }) => (
+            {events.map(({ key, category, title, date, image }) => (
               <article
                 key={key}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white p-5 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="overflow-hidden rounded-xl">
                   <SmartImage
-                    src={resolveImage(images, imageKey, image)}
-                    alt={t(`events.${key}.title`)}
+                    src={rowImage(image, EVENT_IMAGES, key)}
+                    alt={title}
                     width={374}
                     height={200}
                     className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 <span className="mt-4 w-fit rounded bg-accent px-2 py-1 text-xs font-semibold text-white">
-                  {t(`events.${key}.category`)}
+                  {category}
                 </span>
-                <h3 className="mt-4 text-xl font-bold text-ink">
-                  {t(`events.${key}.title`)}
-                </h3>
+                <h3 className="mt-4 text-xl font-bold text-ink">{title}</h3>
                 <p className="mt-3 flex items-center gap-2 text-sm font-medium text-accent">
                   <CalendarDays className="size-4" aria-hidden />
-                  {t(`events.${key}.date`)}
+                  {date}
                 </p>
               </article>
             ))}

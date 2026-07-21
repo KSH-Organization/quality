@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Globe,
   ArrowRight,
+  type LucideIcon,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -27,26 +28,32 @@ export async function generateMetadata({
   return buildPageMetadata(locale as Locale, "home");
 }
 
-const SERVICES = [
-  { key: "purchasing", Icon: Truck },
-  { key: "shipping", Icon: Package },
-  { key: "storage", Icon: Warehouse },
-  { key: "integrated", Icon: Layers },
-  { key: "archiving", Icon: FileText },
-  { key: "quality", Icon: Shield },
-] as const;
+// Icons/logos stay in code, matched to each CMS list row by its `key`. The rows
+// themselves (labels, order, which ones exist) come from the CMS.
+const CAPABILITY_ICONS: Record<string, LucideIcon> = {
+  purchasing: Truck,
+  shipping: Package,
+  storage: Warehouse,
+  integrated: Layers,
+  archiving: FileText,
+  quality: Shield,
+};
 
-const CLIENTS = [
-  { key: "bank", imageKey: "client-bank", src: "/images/client-bank.png", w: 479, h: 129 },
-  { key: "zain", imageKey: "client-zain", src: "/images/client-zain.jpg", w: 946, h: 268 },
-  { key: "samil", imageKey: "client-samil", src: "/images/client-samil.png", w: 329, h: 198 },
-] as const;
+const STAT_ICONS: Record<string, LucideIcon> = {
+  delivery: Zap,
+  security: ShieldCheck,
+  global: Globe,
+};
 
-const STATS = [
-  { key: "delivery", Icon: Zap },
-  { key: "security", Icon: ShieldCheck },
-  { key: "global", Icon: Globe },
-] as const;
+const CLIENT_IMAGES: Record<string, { src: string; w: number; h: number }> = {
+  bank: { src: "/images/client-bank.png", w: 479, h: 129 },
+  zain: { src: "/images/client-zain.jpg", w: 946, h: 268 },
+  samil: { src: "/images/client-samil.png", w: 329, h: 198 },
+};
+
+type CapabilityRow = { key: string; title: string };
+type ClientRow = { key: string; name: string };
+type StatRow = { key: string; value: string; label: string };
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -57,14 +64,19 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const images = messages.images as Record<string, unknown> | undefined;
   const logoSrc = resolveImage(images, "logo", "/images/logo.png");
 
+  const capabilities = t.raw("capabilities.items") as CapabilityRow[];
+  const clients = t.raw("clients.items") as ClientRow[];
+  const stats = t.raw("edge.stats") as StatRow[];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "KSHC Logistic",
     url: SITE_URL,
-    logo: logoSrc.startsWith("http") || logoSrc.startsWith("data:")
-      ? logoSrc
-      : `${SITE_URL}${logoSrc}`,
+    logo:
+      logoSrc.startsWith("http") || logoSrc.startsWith("data:")
+        ? logoSrc
+        : `${SITE_URL}${logoSrc}`,
     description: tMeta("home.description"),
     address: {
       "@type": "PostalAddress",
@@ -130,29 +142,30 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             stagger
             className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2"
           >
-            {SERVICES.map(({ key, Icon }) => (
-              <article
-                key={key}
-                className="group flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="size-6 text-white" aria-hidden />
-                </div>
-                <h3 className="text-2xl font-bold text-ink">
-                  {t(`capabilities.items.${key}`)}
-                </h3>
-                <Link
-                  href="/services"
-                  className="group/link mt-auto flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
+            {capabilities.map(({ key, title }) => {
+              const Icon = CAPABILITY_ICONS[key] ?? Shield;
+              return (
+                <article
+                  key={key}
+                  className="group flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  {t("capabilities.explore")}
-                  <ArrowRight
-                    className="size-4 transition-transform duration-300 group-hover/link:translate-x-1 rtl:-scale-x-100 rtl:group-hover/link:-translate-x-1"
-                    aria-hidden
-                  />
-                </Link>
-              </article>
-            ))}
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="size-6 text-white" aria-hidden />
+                  </div>
+                  <h3 className="text-2xl font-bold text-ink">{title}</h3>
+                  <Link
+                    href="/services"
+                    className="group/link mt-auto flex items-center gap-2 text-sm font-semibold text-accent hover:underline"
+                  >
+                    {t("capabilities.explore")}
+                    <ArrowRight
+                      className="size-4 transition-transform duration-300 group-hover/link:translate-x-1 rtl:-scale-x-100 rtl:group-hover/link:-translate-x-1"
+                      aria-hidden
+                    />
+                  </Link>
+                </article>
+              );
+            })}
           </Reveal>
         </div>
       </section>
@@ -168,16 +181,19 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             stagger
             className="mt-34 flex flex-wrap items-center justify-center gap-12 lg:justify-between"
           >
-            {CLIENTS.map(({ key, imageKey, src, w, h }) => (
-              <SmartImage
-                key={key}
-                src={resolveImage(images, imageKey, src)}
-                alt={t(`clients.${key}`)}
-                width={w}
-                height={h}
-                className="h-16 w-auto object-contain grayscale transition duration-300 hover:grayscale-0 sm:h-20"
-              />
-            ))}
+            {clients.map(({ key, name }) => {
+              const img = CLIENT_IMAGES[key] ?? { src: "", w: 200, h: 80 };
+              return (
+                <SmartImage
+                  key={key}
+                  src={resolveImage(images, `client-${key}`, img.src)}
+                  alt={name}
+                  width={img.w}
+                  height={img.h}
+                  className="h-16 w-auto object-contain grayscale transition duration-300 hover:grayscale-0 sm:h-20"
+                />
+              );
+            })}
           </Reveal>
         </div>
       </section>
@@ -207,25 +223,27 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             stagger
             className="grid w-full flex-1 grid-cols-1 gap-6 sm:grid-cols-3"
           >
-            {STATS.map(({ key, Icon }) => (
-              <div
-                key={key}
-                className="flex flex-col gap-4 rounded-2xl border border-line-dark bg-brand p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="flex size-12 items-center justify-center rounded-3xl bg-accent shadow-lg shadow-accent/20">
-                  <Icon className="size-6 text-brand" aria-hidden />
+            {stats.map(({ key, value, label }) => {
+              const Icon = STAT_ICONS[key] ?? Zap;
+              return (
+                <div
+                  key={key}
+                  className="flex flex-col gap-4 rounded-2xl border border-line-dark bg-brand p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex size-12 items-center justify-center rounded-3xl bg-accent shadow-lg shadow-accent/20">
+                    <Icon className="size-6 text-brand" aria-hidden />
+                  </div>
+                  <div>
+                    <p className="text-[32px] font-extrabold text-white">
+                      {value}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-muted">
+                      {label}
+                    </p>
+                  </div>
                 </div>
-
-                <div>
-                  <p className="text-[32px] font-extrabold text-white">
-                    {t(`edge.stats.${key}.value`)}
-                  </p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-muted">
-                    {t(`edge.stats.${key}.label`)}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </Reveal>
         </div>
       </section>

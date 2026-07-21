@@ -8,6 +8,7 @@ import {
   Cpu,
   BarChart2,
   ShieldCheck,
+  type LucideIcon,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -21,14 +22,19 @@ export async function generateMetadata({
   return buildPageMetadata(locale as Locale, "departments");
 }
 
-const DEPARTMENTS = [
-  { key: "procurement", Icon: ShoppingCart },
-  { key: "logistics", Icon: Truck },
-  { key: "warehousing", Icon: Warehouse },
-  { key: "distribution", Icon: Package },
-  { key: "technology", Icon: Cpu },
-  { key: "planning", Icon: BarChart2 },
-] as const;
+// Icons stay in code, matched to each CMS list row by its `key`. `qa` is
+// rendered full-width below, so it lives here too but isn't in the grid.
+const DEPARTMENT_ICONS: Record<string, LucideIcon> = {
+  procurement: ShoppingCart,
+  logistics: Truck,
+  warehousing: Warehouse,
+  distribution: Package,
+  technology: Cpu,
+  planning: BarChart2,
+  qa: ShieldCheck,
+};
+
+type DepartmentRow = { key: string; title: string; body: string };
 
 export default async function DepartmentsPage({
   params,
@@ -36,6 +42,9 @@ export default async function DepartmentsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("departments");
+  const items = t.raw("items") as DepartmentRow[];
+  const gridItems = items.filter((i) => i.key !== "qa");
+  const qa = items.find((i) => i.key === "qa");
 
   return (
     <>
@@ -70,37 +79,36 @@ export default async function DepartmentsPage({
             stagger
             className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
           >
-            {DEPARTMENTS.map(({ key, Icon }) => (
-              <article
-                key={key}
-                className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
+            {gridItems.map(({ key, title, body }) => {
+              const Icon = DEPARTMENT_ICONS[key] ?? ShieldCheck;
+              return (
+                <article
+                  key={key}
+                  className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex size-14 items-center justify-center rounded-xl bg-[rgba(255,_184,_0,_0.10)] transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="size-7 text-accent" aria-hidden />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-ink">{title}</h3>
+                    <p className="mt-3 leading-[22px] text-muted-dark">{body}</p>
+                  </div>
+                </article>
+              );
+            })}
+            {qa && (
+              <article className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg md:col-span-2 lg:col-span-3">
                 <div className="flex size-14 items-center justify-center rounded-xl bg-[rgba(255,_184,_0,_0.10)] transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="size-7 text-accent" aria-hidden />
+                  <ShieldCheck className="size-7 text-accent" aria-hidden />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-ink">
-                    {t(`items.${key}.title`)}
-                  </h3>
-                  <p className="mt-3 leading-[22px] text-muted-dark">
-                    {t(`items.${key}.body`)}
+                  <h3 className="text-xl font-bold text-ink">{qa.title}</h3>
+                  <p className="mt-3 leading-relaxed text-muted-dark">
+                    {qa.body}
                   </p>
                 </div>
               </article>
-            ))}
-            <article className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg md:col-span-2 lg:col-span-3">
-              <div className="flex size-14 items-center justify-center rounded-xl bg-[rgba(255,_184,_0,_0.10)] transition-transform duration-300 group-hover:scale-110">
-                <ShieldCheck className="size-7 text-accent" aria-hidden />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-ink">
-                  {t("items.qa.title")}
-                </h3>
-                <p className="mt-3 leading-relaxed text-muted-dark">
-                  {t("items.qa.body")}
-                </p>
-              </div>
-            </article>
+            )}
           </Reveal>
         </div>
       </section>

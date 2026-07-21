@@ -1,27 +1,27 @@
 /**
- * Reads site copy from the MOHTAWA CMS. Every page pulls its text through
- * next-intl, so this module's output is merged straight into the messages
- * tree (see src/i18n/request.ts) — no per-component wiring needed.
+ * Reads this site's content from the MOHTAWA CMS and shapes it into the nested
+ * messages tree that next-intl consumes (see `src/i18n/request.ts`), so pages
+ * keep reading copy through `t()` / `t.raw()` with no per-component wiring.
  *
- * Content lives in two CMS collections, both editable straight from the
- * dashboard's ordinary Collections screen (no bespoke editor needed):
- *  - "site-content": one row per translatable string, flat — { key, en, ar }.
- *    `key` is the dot-path into this site's messages tree (e.g. "nav.home",
- *    "about.body"); rebuilt into a nested object below.
- *  - "site-images": one row per image slot — { key, image }. `image` is a
- *    real dashboard "Image" field (drag-and-drop upload), stored as a
- *    base64 data: URI or a pasted URL.
- * See backend/src/seed/site-content.seed.ts in the MOHTAWA repo for how
- * these are seeded, and src/lib/images.ts for how `images.<key>` rows are
- * consumed.
+ * Sources (all optional at runtime — anything missing/unreachable falls back to
+ * the local `messages/<locale>.json`):
+ *  - **Pages** `<base>-<locale>` (see `cms-schema.ts` PAGE_BASES): every content
+ *    block's `id` is its message key; text blocks carry a `value`, `list` blocks
+ *    carry an `items` array. Walked into the tree by dot-path.
+ *  - **Collections** (news/events/jobs): rebuilt into arrays under their message
+ *    path, picking each row's `<field>_<locale>` column.
+ *  - **site-images**: `{ key -> image }`, exposed as `tree.images` and read by
+ *    `src/lib/images.ts`.
  *
- * The CMS is optional at runtime: if it's unreachable, slow, or a
- * collection/row is missing, callers fall back to the local
- * messages/{locale}.json bundled with the app.
+ * The CMS is fetched server-side only (inside next-intl's request config).
  */
+import {
+    COLLECTIONS,
+    IMAGE_KEYS,
+    PAGE_BASES,
+    SITE_IMAGES_SLUG,
+} from "./cms-schema";
 
-// Server-only: the CMS is fetched inside next-intl's request config, never
-// from the browser, so this can point at a container-internal hostname.
 const CMS_API_URL = (process.env.CMS_API_URL ?? "http://localhost:3000/api").replace(
     /\/+$/,
     "",
@@ -29,40 +29,61 @@ const CMS_API_URL = (process.env.CMS_API_URL ?? "http://localhost:3000/api").rep
 
 const FETCH_TIMEOUT_MS = 3000;
 
-type CmsRow = Record<string, unknown>;
+// How long (seconds) a fetched CMS response is cached server-side before the
+// next request re-fetches. This is a *server-side* cache (Next.js Data Cache +
+// Full Route Cache), so a stale page can't be cleared by reloading in the
+// browser or an incognito window — it clears only when this window elapses.
+// Kept short so an admin editing in the dashboard sees the change within a few
+// seconds. Set CMS_REVALIDATE_SECONDS=0 to always render live (every request
+// hits the CMS); raise it for a high-traffic deploy that tolerates staler copy.
+const REVALIDATE_SECONDS = Number(process.env.CMS_REVALIDATE_SECONDS ?? "5");
 
-async function fetchCollectionRows(slug: string): Promise<CmsRow[] | null> {
+type Json = Record<string, unknown>;
+type CmsBlock = {
+    id?: unknown;
+    type?: unknown;
+    value?: unknown;
+    items?: unknown;
+};
+
+async function fetchJson(path: string): Promise<Json | null> {
     try {
-        const res = await fetch(`${CMS_API_URL}/collections/slug/${slug}`, {
+        const res = await fetch(`${CMS_API_URL}${path}`, {
             signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-            // Revalidate periodically rather than on every request — CMS edits
-            // don't need to appear instantly, and this keeps pages fast even
-            // when the CMS is slow.
-            next: { revalidate: 60 },
+            next: { revalidate: REVALIDATE_SECONDS },
         });
-
         if (!res.ok) return null;
-
-        const collection = (await res.json()) as { items?: unknown };
-        return Array.isArray(collection.items)
-            ? (collection.items as CmsRow[])
-            : null;
+        return (await res.json()) as Json;
     } catch {
-        // Network error, timeout, CMS down, bad JSON — any of these just means
-        // "no CMS override available right now".
+        // Network error, timeout, CMS down, bad JSON → "no override available".
         return null;
     }
 }
 
+/** Every content block across every section of a published page, or null. */
+async function fetchPageBlocks(slug: string): Promise<CmsBlock[] | null> {
+    const page = await fetchJson(`/pages/slug/${slug}`);
+    if (!page || !Array.isArray(page.sections)) return null;
+    const blocks: CmsBlock[] = [];
+    for (const section of page.sections as Json[]) {
+        const content = section?.content as Json | undefined;
+        const list = content?.blocks;
+        if (Array.isArray(list)) blocks.push(...(list as CmsBlock[]));
+    }
+    return blocks;
+}
+
+async function fetchCollectionRows(slug: string): Promise<Json[] | null> {
+    const collection = await fetchJson(`/collections/slug/${slug}`);
+    return collection && Array.isArray(collection.items)
+        ? (collection.items as Json[])
+        : null;
+}
+
 /** Sets `value` at a dot-path inside `target`, creating intermediate objects. */
-function setPath(
-    target: Record<string, unknown>,
-    path: string,
-    value: unknown,
-): void {
+function setPath(target: Json, path: string, value: unknown): void {
     const parts = path.split(".").filter(Boolean);
     if (parts.length === 0) return;
-
     let cursor = target;
     for (let i = 0; i < parts.length - 1; i++) {
         const part = parts[i];
@@ -70,7 +91,7 @@ function setPath(
         if (typeof next !== "object" || next === null || Array.isArray(next)) {
             cursor[part] = {};
         }
-        cursor = cursor[part] as Record<string, unknown>;
+        cursor = cursor[part] as Json;
     }
     cursor[parts[parts.length - 1]] = value;
 }
@@ -80,71 +101,98 @@ function nonEmptyString(value: unknown): string | null {
 }
 
 /**
- * Builds the CMS override tree for `locale`: the nested messages object from
- * "site-content" rows, plus an "images" namespace from "site-images" rows.
- * Only rows with a non-empty value for this locale are included, so
- * deepMerge() below correctly falls back to local copy for everything else.
+ * Builds the CMS override tree for `locale` from Pages + Collections + images.
+ * Only non-empty leaves are included so `deepMerge` below falls back to local
+ * copy for everything the CMS doesn't define. Returns null when the CMS gave us
+ * nothing at all (so the site runs entirely on local copy).
  */
-export async function fetchCmsSiteContent(
-    locale: string,
-): Promise<Record<string, unknown> | null> {
-    const [textRows, imageRows] = await Promise.all([
-        fetchCollectionRows("site-content"),
-        fetchCollectionRows("site-images"),
+export async function fetchCmsSiteContent(locale: string): Promise<Json | null> {
+    const [pageBlockLists, imageRows, ...collectionRowLists] = await Promise.all([
+        Promise.all(PAGE_BASES.map((base) => fetchPageBlocks(`${base}-${locale}`))),
+        fetchCollectionRows(SITE_IMAGES_SLUG),
+        ...COLLECTIONS.map((c) => fetchCollectionRows(c.slug)),
     ]);
 
-    if (!textRows && !imageRows) return null;
+    const tree: Json = {};
+    let gotAnything = false;
 
-    const content: Record<string, unknown> = {};
-
-    for (const row of textRows ?? []) {
-        const key = nonEmptyString(row.key);
-        const value = nonEmptyString(row[locale]);
-        if (key && value) setPath(content, key, value);
+    // Pages → tree. Text block: id -> value. List block: id -> items array.
+    for (const blocks of pageBlockLists) {
+        if (!blocks) continue;
+        for (const block of blocks) {
+            const id = nonEmptyString(block.id);
+            if (!id) continue;
+            if (block.type === "list") {
+                if (Array.isArray(block.items)) {
+                    setPath(tree, id, block.items);
+                    gotAnything = true;
+                }
+            } else {
+                const value = nonEmptyString(block.value);
+                if (value) {
+                    setPath(tree, id, value);
+                    gotAnything = true;
+                }
+            }
+        }
     }
 
-    const images: Record<string, string> = {};
-    for (const row of imageRows ?? []) {
-        const key = nonEmptyString(row.key);
-        const value = nonEmptyString(row.image);
-        if (key && value) images[key] = value;
+    // Images → tree.images (key -> image), only non-empty.
+    if (imageRows) {
+        const images: Record<string, string> = {};
+        for (const row of imageRows) {
+            const key = nonEmptyString(row.key);
+            const img = nonEmptyString(row.image);
+            if (key && IMAGE_KEYS.includes(key) && img) images[key] = img;
+        }
+        if (Object.keys(images).length) {
+            tree.images = images;
+            gotAnything = true;
+        }
     }
-    if (Object.keys(images).length > 0) content.images = images;
 
-    return Object.keys(content).length > 0 ? content : null;
+    // Collections → arrays at their message path (locale-selected columns).
+    COLLECTIONS.forEach((def, i) => {
+        const rows = collectionRowLists[i];
+        if (!rows || rows.length === 0) return;
+        const items = rows.map((row) => {
+            const item: Json = { key: row.key };
+            for (const field of def.localeFields) {
+                item[field] = row[`${field}_${locale}`] ?? "";
+            }
+            for (const field of def.flatFields) {
+                item[field] = row[field] ?? "";
+            }
+            return item;
+        });
+        setPath(tree, def.path, items);
+        gotAnything = true;
+    });
+
+    return gotAnything ? tree : null;
 }
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-    return (
-        typeof value === "object" &&
-        value !== null &&
-        !Array.isArray(value)
-    );
+function isPlainObject(value: unknown): value is Json {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /**
- * Deep-merges `override` onto `base`, `override` wins on every leaf it
- * defines. Keys `override` doesn't have (or sets to null/undefined) keep
- * their value from `base` — that's what makes "only some text edited in the
- * CMS, the rest stays local" work.
+ * Deep-merges `override` onto `base`; `override` wins on every leaf it defines.
+ * Arrays replace wholesale (a CMS list replaces the local fallback list).
  */
-export function deepMerge<T extends Record<string, unknown>>(
+export function deepMerge<T extends Json>(
     base: T,
-    override: Record<string, unknown> | null | undefined,
+    override: Json | null | undefined,
 ): T {
     if (!override) return base;
-
-    const result: Record<string, unknown> = { ...base };
-
+    const result: Json = { ...base };
     for (const [key, overrideValue] of Object.entries(override)) {
         if (overrideValue === undefined || overrideValue === null) continue;
-
         const baseValue = result[key];
         result[key] =
             isPlainObject(baseValue) && isPlainObject(overrideValue)
                 ? deepMerge(baseValue, overrideValue)
                 : overrideValue;
     }
-
     return result as T;
 }
