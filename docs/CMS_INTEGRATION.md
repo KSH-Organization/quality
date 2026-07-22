@@ -12,17 +12,26 @@ content wins wherever it has a value.
 
 ## Content model
 
-- **Pages** (`<base>-<locale>`, e.g. `home-en`) hold a page's copy as typed
-  content blocks; a block's `id` is its message key, and fixed repeated groups
-  (clients, service cards, stats) are `list` blocks.
+The CMS uses Strapi-style i18n: **locales are managed in the CMS** (Settings →
+Internationalization, one default), each document has **per-locale translations**
+overlaid on its default-locale base, and fields can be **shared** (one value
+across languages) or **localized** (translated). Reads pass `?locale=<code>` and
+the CMS returns already-resolved content (default-locale fallback).
+
+- **Pages** (slug `<base>`, e.g. `home`) hold a page's default-locale copy as
+  typed content blocks; a block's `id` is its message key, and fixed repeated
+  groups (clients, service cards, stats) are `list` blocks. Other locales live in
+  the page's `translations` map.
 - **Collections** hold the genuinely dynamic lists — `news-articles`,
-  `news-events`, `careers-jobs` — one row per item with per-locale columns
-  (`title_en`, `title_ar`, …). Add/remove items from the dashboard.
-- **`site-images`** holds fixed chrome/hero/client images (`key → image`).
+  `news-events`, `careers-jobs` — one row per item; text fields are localized,
+  `key`/`image` are shared. Add/remove items from the dashboard.
+- **`site-images`** holds fixed chrome/hero/client images (`key → image`),
+  locale-agnostic.
 
 The single source of truth for this layout is [`src/lib/cms-schema.ts`](../src/lib/cms-schema.ts),
-imported by both the read layer ([`src/lib/cms.ts`](../src/lib/cms.ts)) and the
-seed ([`scripts/seed-cms.ts`](../scripts/seed-cms.ts)).
+imported by both the read layer ([`src/lib/cms.ts`](../src/lib/cms.ts), which
+fetches `?locale=<locale>`) and the seed
+([`scripts/seed-cms.ts`](../scripts/seed-cms.ts)).
 
 ## Run the seed
 
@@ -38,9 +47,11 @@ re-run: existing Pages are left untouched; collections/images upsert by key.
 
 ## Adding a language
 
-Add the locale to [`src/i18n/routing.ts`](../src/i18n/routing.ts), add a
-`messages/<locale>.json`, and re-run the seed — it creates that locale's Pages and
-adds the matching `_<locale>` columns to every collection.
+1. Add the locale in the CMS dashboard (Settings → Internationalization).
+2. Add it to [`src/i18n/routing.ts`](../src/i18n/routing.ts) so the site has
+   `/<locale>` URLs, and add a `messages/<locale>.json`.
+3. Re-run the seed to populate that language's translations (or translate in the
+   dashboard by switching locale in the Pages/Collections editors).
 
 ## Caching
 

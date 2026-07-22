@@ -5,21 +5,26 @@
  * managed by MOHTAWA. See docs/CMS_INTEGRATION.md and the dashboard's
  * "Integration guide" page for the full write-up.
  *
- * What it creates (see src/lib/cms-schema.ts for the single source of truth):
- *  - One **Page per locale** for each PAGE_BASE (slug `<base>-<locale>`,
- *    published). A page's copy is stored as content blocks grouped into
- *    sections; a text string is a text block (`id` = its message key), a
- *    repeated group is a `list` block whose `items` is the array.
- *  - **Collections** for the dynamic lists (news/events/jobs), one row per item
- *    with per-locale columns (`title_en`, `title_ar`, …).
+ * What it creates (see src/lib/cms-schema.ts for the single source of truth),
+ * using MOHTAWA's Strapi-style i18n — one document per page/collection with
+ * per-locale translations, not a copy per language:
+ *  - One **Page** per PAGE_BASE (slug `<base>`, published) holding the
+ *    default-locale copy as content blocks; a text string is a text block
+ *    (`id` = its message key), a repeated group is a `list` block. For every
+ *    other locale it PUTs a `translations` map ({ blockId: value }).
+ *  - **Collections** for the dynamic lists (news/events/jobs): default-locale
+ *    rows + a per-locale `translations` map, with localized text fields and
+ *    shared `key`/`image` fields.
  *  - The **site-images** collection for fixed chrome/hero images.
- *  - Deletes the obsolete flat `site-content` collection if present.
+ *  - Deletes the obsolete flat `site-content` collection and any legacy
+ *    per-locale `<base>-<locale>` pages from the previous model.
  *
- * Locales come from src/i18n/routing.ts — add a locale + a messages/<locale>.json
- * and re-run to extend the site to a new language.
+ * Locales come from src/i18n/routing.ts and should match the CMS registry
+ * (GET /api/locales) — add a locale there + a messages/<locale>.json and re-run
+ * to seed that language's translations.
  *
- * Safe to re-run: existing Pages are left untouched (never clobbers an admin's
- * page edits); collections/images upsert by key (only missing keys inserted).
+ * Safe to re-run: existing Pages/Collections are left in place (never clobbers
+ * an editor's translations); only missing documents are created.
  *
  * Usage (from the repo root):
  *   CMS_API_URL=http://localhost:3000/api \
@@ -46,6 +51,10 @@ const ADMIN_EMAIL = process.env.CMS_ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.CMS_ADMIN_PASSWORD;
 
 const LOCALES = routing.locales as readonly string[];
+// The base/default locale — its values live in the page blocks / collection
+// rows; other locales are stored as translations overlaid on top.
+const BASE_LOCALE = routing.defaultLocale as string;
+const OTHER_LOCALES = LOCALES.filter((l) => l !== BASE_LOCALE);
 
 type Json = Record<string, unknown>;
 type Block = {
@@ -215,106 +224,157 @@ function mergeByKey(fresh: Json[], existing: Json[]): Json[] {
 
 // --- seed steps -------------------------------------------------------------
 
-async function seedPages(token: string, messagesByLocale: Record<string, Json>) {
-    for (const locale of LOCALES) {
-        const msgs = messagesByLocale[locale];
-        for (const base of PAGE_BASES) {
-            const slug = `${base}-${locale}`;
-            const existing = await api("GET", `/pages/slug/${slug}`, token);
-            if (existing.status === 200) {
-                console.log(`  page ${slug}: exists — skipped`);
-                continue;
-            }
-            const created = await api("POST", "/pages", token, {
-                title: `${titleCase(base)} (${localeLabel(locale)})`,
-                slug,
-            });
-            if (created.status !== 201 && created.status !== 200) {
-                throw new Error(`create page ${slug} failed (${created.status}): ${JSON.stringify(created.json)}`);
-            }
-            const pageId = created.json.id as string;
-            await api("PUT", `/pages/${pageId}`, token, { isPublished: true });
+type SchemaField = {
+    id: string;
+    type: string;
+    label: string;
+    localized?: boolean;
+};
 
-            const sections = buildPageSections(base, msgs);
-            for (let i = 0; i < sections.length; i++) {
-                const s = sections[i];
-                const r = await api("POST", "/sections", token, {
-                    pageId,
-                    title: s.title,
-                    order: i,
-                    content: { blocks: s.blocks },
-                });
-                if (r.status !== 201 && r.status !== 200) {
-                    throw new Error(`create section ${slug}/${s.title} failed (${r.status}): ${JSON.stringify(r.json)}`);
-                }
-            }
-            console.log(`  page ${slug}: created (${sections.length} sections, published)`);
+/** Flat { blockId: value | items } for a page base in one locale. */
+function collectBlockValues(base: string, msgs: Json): Record<string, unknown> {
+    const values: Record<string, unknown> = {};
+    for (const section of buildPageSections(base, msgs)) {
+        for (const b of section.blocks) {
+            values[b.id] = b.type === "list" ? b.items : b.value;
         }
+    }
+    return values;
+}
+
+async function seedPages(token: string, messagesByLocale: Record<string, Json>) {
+    const defaultMsgs = messagesByLocale[BASE_LOCALE];
+
+    for (const base of PAGE_BASES) {
+        const existing = await api("GET", `/pages/slug/${base}`, token);
+        if (existing.status === 200) {
+            console.log(`  page ${base}: exists — skipped`);
+            continue;
+        }
+
+        const created = await api("POST", "/pages", token, {
+            title: titleCase(base),
+            slug: base,
+        });
+        if (created.status !== 201 && created.status !== 200) {
+            throw new Error(`create page ${base} failed (${created.status}): ${JSON.stringify(created.json)}`);
+        }
+        const pageId = created.json.id as string;
+        await api("PUT", `/pages/${pageId}`, token, { isPublished: true });
+
+        const sections = buildPageSections(base, defaultMsgs);
+        for (let i = 0; i < sections.length; i++) {
+            const s = sections[i];
+            const r = await api("POST", "/sections", token, {
+                pageId,
+                title: s.title,
+                order: i,
+                content: { blocks: s.blocks },
+            });
+            if (r.status !== 201 && r.status !== 200) {
+                throw new Error(`create section ${base}/${s.title} failed (${r.status}): ${JSON.stringify(r.json)}`);
+            }
+        }
+
+        for (const locale of OTHER_LOCALES) {
+            const values = collectBlockValues(base, messagesByLocale[locale]);
+            const r = await api("PUT", `/pages/${pageId}/translations`, token, {
+                locale,
+                values,
+            });
+            if (r.status !== 200) {
+                throw new Error(`set ${locale} translations for ${base} failed (${r.status}): ${JSON.stringify(r.json)}`);
+            }
+        }
+        console.log(
+            `  page ${base}: created (${sections.length} sections, published, ${OTHER_LOCALES.length} translations)`,
+        );
     }
 }
 
-async function upsertCollection(
-    token: string,
-    name: string,
-    slug: string,
-    fields: { id: string; type: string; label: string }[],
-    freshRows: Json[],
-) {
-    const existing = await api("GET", `/collections/slug/${slug}`, token);
-    if (existing.status === 200) {
-        const items = mergeByKey(
-            freshRows,
-            Array.isArray(existing.json.items) ? existing.json.items : [],
-        );
-        const r = await api("PUT", `/collections/${existing.json.id}`, token, {
-            name,
-            items,
-            schema: { fields },
-        });
-        if (r.status !== 200) throw new Error(`update ${slug} failed (${r.status}): ${JSON.stringify(r.json)}`);
-        console.log(`  collection ${slug}: updated (${items.length} rows)`);
-    } else {
-        const r = await api("POST", "/collections", token, {
-            name,
-            items: freshRows,
-            schema: { fields },
-        });
-        if (r.status !== 201 && r.status !== 200) throw new Error(`create ${slug} failed (${r.status}): ${JSON.stringify(r.json)}`);
-        console.log(`  collection ${slug}: created (${freshRows.length} rows)`);
+/** { [rowKey]: { [localizedField]: value } } for a collection in one locale. */
+function collectionTranslations(
+    def: (typeof COLLECTIONS)[number],
+    msgs: Json,
+): Record<string, Record<string, unknown>> {
+    const arr = (getPath(msgs, def.path) as Json[] | undefined) ?? [];
+    const out: Record<string, Record<string, unknown>> = {};
+    for (const row of arr) {
+        const fields: Record<string, unknown> = {};
+        for (const f of def.localeFields) fields[f] = row[f] ?? "";
+        out[String(row.key)] = fields;
     }
+    return out;
 }
 
 async function seedCollections(token: string, messagesByLocale: Record<string, Json>) {
-    const defaultMsgs = messagesByLocale[routing.defaultLocale];
+    const defaultMsgs = messagesByLocale[BASE_LOCALE];
 
     for (const def of COLLECTIONS) {
-        // Row keys + order come from the default locale's array at this path.
         const baseArr = getPath(defaultMsgs, def.path) as Json[] | undefined;
         if (!Array.isArray(baseArr)) continue;
 
-        const rows: Json[] = baseArr.map((baseRow) => {
-            const row: Json = { key: baseRow.key };
-            for (const locale of LOCALES) {
-                const arr = getPath(messagesByLocale[locale], def.path) as Json[] | undefined;
-                const match = arr?.find((r) => r.key === baseRow.key) ?? {};
-                for (const f of def.localeFields) row[`${f}_${locale}`] = match[f] ?? "";
-            }
-            for (const f of def.flatFields) row[f] = "";
-            return row;
+        // Base rows carry the default-locale values; text fields are localized,
+        // key + shared fields (e.g. image) are not.
+        const items: Json[] = baseArr.map((row) => {
+            const it: Json = { key: row.key };
+            for (const f of def.localeFields) it[f] = row[f] ?? "";
+            for (const f of def.flatFields) it[f] = "";
+            return it;
         });
-
-        const fields = [{ id: "key", type: "text", label: "Key" }];
+        const fields: SchemaField[] = [
+            { id: "key", type: "text", label: "Key", localized: false },
+        ];
         for (const f of def.localeFields)
-            for (const locale of LOCALES)
-                fields.push({
-                    id: `${f}_${locale}`,
-                    type: fieldType(f),
-                    label: `${titleCase(f)} (${localeLabel(locale)})`,
-                });
+            fields.push({ id: f, type: fieldType(f), label: titleCase(f), localized: true });
         for (const f of def.flatFields)
-            fields.push({ id: f, type: fieldType(f), label: titleCase(f) });
+            fields.push({ id: f, type: fieldType(f), label: titleCase(f), localized: false });
 
-        await upsertCollection(token, titleCase(def.slug), def.slug, fields, rows);
+        // Replace a collection left over from the old per-locale-column model.
+        const existing = await api("GET", `/collections/slug/${def.slug}`, token);
+        const oldShape =
+            existing.status === 200 &&
+            Array.isArray(existing.json.schema?.fields) &&
+            existing.json.schema.fields.some((f: SchemaField) => /_/.test(f.id));
+        if (oldShape) {
+            await api("DELETE", `/collections/${existing.json.id}`, token);
+        }
+
+        if (existing.status === 200 && !oldShape) {
+            const merged = mergeByKey(
+                items,
+                Array.isArray(existing.json.items) ? existing.json.items : [],
+            );
+            const r = await api("PUT", `/collections/${existing.json.id}`, token, {
+                name: titleCase(def.slug),
+                items: merged,
+                schema: { fields },
+            });
+            if (r.status !== 200) throw new Error(`update ${def.slug} failed (${r.status}): ${JSON.stringify(r.json)}`);
+            console.log(`  collection ${def.slug}: updated (${merged.length} rows)`);
+            continue;
+        }
+
+        const created = await api("POST", "/collections", token, {
+            name: titleCase(def.slug),
+            items,
+            schema: { fields },
+        });
+        if (created.status !== 201 && created.status !== 200)
+            throw new Error(`create ${def.slug} failed (${created.status}): ${JSON.stringify(created.json)}`);
+        const collectionId = created.json.id as string;
+
+        for (const locale of OTHER_LOCALES) {
+            const values = collectionTranslations(def, messagesByLocale[locale]);
+            const r = await api("PUT", `/collections/${collectionId}/translations`, token, {
+                locale,
+                values,
+            });
+            if (r.status !== 200) throw new Error(`set ${locale} translations for ${def.slug} failed (${r.status}): ${JSON.stringify(r.json)}`);
+        }
+        console.log(
+            `  collection ${def.slug}: created (${items.length} rows, ${OTHER_LOCALES.length} translations)`,
+        );
     }
 }
 
@@ -323,24 +383,52 @@ function getPath(obj: Json, path: string): unknown {
 }
 
 async function seedImages(token: string) {
+    // Locale-agnostic (one shared collection): the frontend resolves images
+    // CMS-first regardless of locale. Non-destructive: only adds missing keys.
     const rows: Json[] = IMAGE_KEYS.map((key) => ({ key, image: "" }));
-    await upsertCollection(
-        token,
-        "Site Images",
-        SITE_IMAGES_SLUG,
-        [
-            { id: "key", type: "text", label: "Key" },
-            { id: "image", type: "image", label: "Image" },
-        ],
-        rows,
-    );
+    const fields: SchemaField[] = [
+        { id: "key", type: "text", label: "Key", localized: false },
+        { id: "image", type: "image", label: "Image", localized: false },
+    ];
+    const existing = await api("GET", `/collections/slug/${SITE_IMAGES_SLUG}`, token);
+    if (existing.status === 200) {
+        const merged = mergeByKey(
+            rows,
+            Array.isArray(existing.json.items) ? existing.json.items : [],
+        );
+        await api("PUT", `/collections/${existing.json.id}`, token, {
+            name: "Site Images",
+            items: merged,
+            schema: { fields },
+        });
+        console.log(`  collection ${SITE_IMAGES_SLUG}: updated (${merged.length} rows)`);
+    } else {
+        await api("POST", "/collections", token, {
+            name: "Site Images",
+            items: rows,
+            schema: { fields },
+        });
+        console.log(`  collection ${SITE_IMAGES_SLUG}: created (${rows.length} rows)`);
+    }
 }
 
-async function deleteLegacySiteContent(token: string) {
-    const existing = await api("GET", "/collections/slug/site-content", token);
-    if (existing.status === 200) {
-        await api("DELETE", `/collections/${existing.json.id}`, token);
+// Remove the previous model's artifacts: the flat site-content collection and
+// the per-locale `<base>-<locale>` pages (superseded by one page per base).
+async function deleteLegacy(token: string) {
+    const sc = await api("GET", "/collections/slug/site-content", token);
+    if (sc.status === 200) {
+        await api("DELETE", `/collections/${sc.json.id}`, token);
         console.log("  removed obsolete 'site-content' collection");
+    }
+    for (const base of PAGE_BASES) {
+        for (const locale of LOCALES) {
+            const slug = `${base}-${locale}`;
+            const p = await api("GET", `/pages/slug/${slug}`, token);
+            if (p.status === 200) {
+                await api("DELETE", `/pages/${p.json.id}`, token);
+                console.log(`  removed legacy page ${slug}`);
+            }
+        }
     }
 }
 
@@ -349,13 +437,14 @@ async function run() {
     const messagesByLocale: Record<string, Json> = {};
     for (const locale of LOCALES) messagesByLocale[locale] = loadMessages(locale);
 
-    console.log(`Locales: ${LOCALES.join(", ")}`);
+    console.log(`Locales: ${LOCALES.join(", ")} (base: ${BASE_LOCALE})`);
+    console.log("Cleanup:");
+    await deleteLegacy(token);
     console.log("Pages:");
     await seedPages(token, messagesByLocale);
     console.log("Collections:");
     await seedCollections(token, messagesByLocale);
     await seedImages(token);
-    await deleteLegacySiteContent(token);
     console.log("Done.");
 }
 

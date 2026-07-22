@@ -60,9 +60,17 @@ async function fetchJson(path: string): Promise<Json | null> {
     }
 }
 
-/** Every content block across every section of a published page, or null. */
-async function fetchPageBlocks(slug: string): Promise<CmsBlock[] | null> {
-    const page = await fetchJson(`/pages/slug/${slug}`);
+const q = (locale: string) => `?locale=${encodeURIComponent(locale)}`;
+
+/**
+ * Every content block across every section of a published page, resolved for
+ * `locale` by the CMS (localized values overlaid, default-locale fallback).
+ */
+async function fetchPageBlocks(
+    slug: string,
+    locale: string,
+): Promise<CmsBlock[] | null> {
+    const page = await fetchJson(`/pages/slug/${slug}${q(locale)}`);
     if (!page || !Array.isArray(page.sections)) return null;
     const blocks: CmsBlock[] = [];
     for (const section of page.sections as Json[]) {
@@ -73,8 +81,11 @@ async function fetchPageBlocks(slug: string): Promise<CmsBlock[] | null> {
     return blocks;
 }
 
-async function fetchCollectionRows(slug: string): Promise<Json[] | null> {
-    const collection = await fetchJson(`/collections/slug/${slug}`);
+async function fetchCollectionRows(
+    slug: string,
+    locale: string,
+): Promise<Json[] | null> {
+    const collection = await fetchJson(`/collections/slug/${slug}${q(locale)}`);
     return collection && Array.isArray(collection.items)
         ? (collection.items as Json[])
         : null;
@@ -108,9 +119,9 @@ function nonEmptyString(value: unknown): string | null {
  */
 export async function fetchCmsSiteContent(locale: string): Promise<Json | null> {
     const [pageBlockLists, imageRows, ...collectionRowLists] = await Promise.all([
-        Promise.all(PAGE_BASES.map((base) => fetchPageBlocks(`${base}-${locale}`))),
-        fetchCollectionRows(SITE_IMAGES_SLUG),
-        ...COLLECTIONS.map((c) => fetchCollectionRows(c.slug)),
+        Promise.all(PAGE_BASES.map((base) => fetchPageBlocks(base, locale))),
+        fetchCollectionRows(SITE_IMAGES_SLUG, locale),
+        ...COLLECTIONS.map((c) => fetchCollectionRows(c.slug, locale)),
     ]);
 
     const tree: Json = {};
@@ -155,12 +166,10 @@ export async function fetchCmsSiteContent(locale: string): Promise<Json | null> 
     COLLECTIONS.forEach((def, i) => {
         const rows = collectionRowLists[i];
         if (!rows || rows.length === 0) return;
+        // The CMS already resolved rows for this locale, so fields are plain.
         const items = rows.map((row) => {
             const item: Json = { key: row.key };
-            for (const field of def.localeFields) {
-                item[field] = row[`${field}_${locale}`] ?? "";
-            }
-            for (const field of def.flatFields) {
+            for (const field of [...def.localeFields, ...def.flatFields]) {
                 item[field] = row[field] ?? "";
             }
             return item;

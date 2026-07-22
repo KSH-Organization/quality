@@ -35,15 +35,16 @@ export type CollectionDef = {
     slug: string;
     /** Dot-path in the messages tree this collection populates. */
     path: string;
-    /** Fields translated per locale (stored as `<field>_<locale>` columns). */
+    /** Fields translated per locale (localized in the CMS schema). */
     localeFields: string[];
-    /** Locale-agnostic fields (stored as-is), e.g. an uploaded image. */
+    /** Shared (non-localized) fields, e.g. an uploaded image. */
     flatFields: string[];
 };
 
-// Dynamic lists → Collections. `path` is where the read layer injects the
-// built array into the messages tree, matching the local fallback arrays in
-// messages/*.json (so components read them the same way with `t.raw`).
+// Dynamic lists → Collections. The CMS resolves each collection per ?locale=,
+// so the read layer gets already-localized rows (plain field names). `path` is
+// where the built array is injected into the messages tree, matching the local
+// fallback arrays in messages/*.json (components read them with `t.raw`).
 export const COLLECTIONS: CollectionDef[] = [
     {
         slug: "news-articles",
