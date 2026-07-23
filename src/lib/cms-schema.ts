@@ -70,20 +70,23 @@ export const COLLECTIONS: CollectionDef[] = [
 // blocks so they aren't duplicated as page content.
 export const COLLECTION_PATHS = COLLECTIONS.map((c) => c.path);
 
-// Fixed chrome/hero/client images, kept in a single locale-agnostic collection
-// (avoids re-uploading the same logo per language). Per-article/event images
-// instead live on their own collection rows (the `image` flatField above).
-export const SITE_IMAGES_SLUG = "site-images";
-export const IMAGE_KEYS = [
-    "logo",
-    "hero-home",
-    "hero-about",
-    "hero-services",
-    "hero-careers",
-    "about-illustration",
-    "about-vision",
-    "about-mission",
-    "client-bank",
-    "client-zain",
-    "client-samil",
-];
+// Fixed chrome/hero/client images now live as image blocks ON their page (a
+// "Media" section), backed by the CMS Media Library. Each block's id is
+// `images.<key>`, so the read layer's setPath routes it straight into
+// tree.images[<key>] — the same map resolveImage() already reads, so the
+// components need no changes. Blocks are Shared (one value across locales) and
+// start empty (the site falls back to its bundled /public/images asset).
+// Per-article/event images live on their own collection rows (the `image`
+// flatField above).
+export const IMAGE_BLOCKS: Record<string, string[]> = {
+    globals: ["logo"],
+    home: ["hero-home", "client-bank", "client-zain", "client-samil"],
+    about: [
+        "hero-about",
+        "about-illustration",
+        "about-vision",
+        "about-mission",
+    ],
+    services: ["hero-services"],
+    careers: ["hero-careers"],
+};

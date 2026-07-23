@@ -15,9 +15,11 @@
  *  - **Collections** for the dynamic lists (news/events/jobs): default-locale
  *    rows + a per-locale `translations` map, with localized text fields and
  *    shared `key`/`image` fields.
- *  - The **site-images** collection for fixed chrome/hero images.
- *  - Deletes the obsolete flat `site-content` collection and any legacy
- *    per-locale `<base>-<locale>` pages from the previous model.
+ *  - Fixed chrome/hero images as **Shared image blocks** in a "Media" section
+ *    on each page (id `images.<key>`, empty → local fallback; an admin uploads
+ *    via the Media Library). No separate images collection.
+ *  - Deletes the obsolete `site-content`/`site-images` collections and any
+ *    legacy per-locale `<base>-<locale>` pages from previous models.
  *
  * Locales come from src/i18n/routing.ts and should match the CMS registry
  * (GET /api/locales) — add a locale there + a messages/<locale>.json and re-run
@@ -38,9 +40,8 @@ import { routing } from "../src/i18n/routing";
 import {
     COLLECTIONS,
     COLLECTION_PATHS,
-    IMAGE_KEYS,
+    IMAGE_BLOCKS,
     PAGE_BASES,
-    SITE_IMAGES_SLUG,
 } from "../src/lib/cms-schema";
 
 const CMS_API_URL = (process.env.CMS_API_URL ?? "http://localhost:3000/api").replace(
@@ -64,8 +65,27 @@ type Block = {
     value?: string;
     fields?: { id: string; type: string; label: string }[];
     items?: Json[];
+    localized?: boolean;
 };
 type Section = { title: string; blocks: Block[] };
+
+// Image blocks for a page base — Shared (one value across locales), stored in
+// a "Media" section. Empty by default; an admin picks/uploads via the Media
+// Library, and the site falls back to its bundled asset until then.
+function imageSection(base: string): Section | null {
+    const keys = IMAGE_BLOCKS[base] ?? [];
+    if (!keys.length) return null;
+    return {
+        title: "Media",
+        blocks: keys.map((key) => ({
+            id: `images.${key}`,
+            type: "image",
+            label: titleCase(key),
+            value: "",
+            localized: false,
+        })),
+    };
+}
 
 // --- tiny HTTP helpers ------------------------------------------------------
 
@@ -248,7 +268,21 @@ async function seedPages(token: string, messagesByLocale: Record<string, Json>) 
     for (const base of PAGE_BASES) {
         const existing = await api("GET", `/pages/slug/${base}`, token);
         if (existing.status === 200) {
-            console.log(`  page ${base}: exists — skipped`);
+            // Don't clobber an existing page, but do add the "Media" image
+            // section if a previous seed created the page before it existed.
+            const media = imageSection(base);
+            const sections = (existing.json.sections ?? []) as { title: string }[];
+            if (media && !sections.some((s) => s.title === "Media")) {
+                await api("POST", "/sections", token, {
+                    pageId: existing.json.id,
+                    title: media.title,
+                    order: sections.length,
+                    content: { blocks: media.blocks },
+                });
+                console.log(`  page ${base}: exists — added Media section`);
+            } else {
+                console.log(`  page ${base}: exists — skipped`);
+            }
             continue;
         }
 
@@ -262,7 +296,11 @@ async function seedPages(token: string, messagesByLocale: Record<string, Json>) 
         const pageId = created.json.id as string;
         await api("PUT", `/pages/${pageId}`, token, { isPublished: true });
 
-        const sections = buildPageSections(base, defaultMsgs);
+        const media = imageSection(base);
+        const sections = [
+            ...buildPageSections(base, defaultMsgs),
+            ...(media ? [media] : []),
+        ];
         for (let i = 0; i < sections.length; i++) {
             const s = sections[i];
             const r = await api("POST", "/sections", token, {
@@ -382,43 +420,16 @@ function getPath(obj: Json, path: string): unknown {
     return path.split(".").reduce<unknown>((acc, k) => (isPlainObject(acc) ? acc[k] : undefined), obj);
 }
 
-async function seedImages(token: string) {
-    // Locale-agnostic (one shared collection): the frontend resolves images
-    // CMS-first regardless of locale. Non-destructive: only adds missing keys.
-    const rows: Json[] = IMAGE_KEYS.map((key) => ({ key, image: "" }));
-    const fields: SchemaField[] = [
-        { id: "key", type: "text", label: "Key", localized: false },
-        { id: "image", type: "image", label: "Image", localized: false },
-    ];
-    const existing = await api("GET", `/collections/slug/${SITE_IMAGES_SLUG}`, token);
-    if (existing.status === 200) {
-        const merged = mergeByKey(
-            rows,
-            Array.isArray(existing.json.items) ? existing.json.items : [],
-        );
-        await api("PUT", `/collections/${existing.json.id}`, token, {
-            name: "Site Images",
-            items: merged,
-            schema: { fields },
-        });
-        console.log(`  collection ${SITE_IMAGES_SLUG}: updated (${merged.length} rows)`);
-    } else {
-        await api("POST", "/collections", token, {
-            name: "Site Images",
-            items: rows,
-            schema: { fields },
-        });
-        console.log(`  collection ${SITE_IMAGES_SLUG}: created (${rows.length} rows)`);
-    }
-}
-
-// Remove the previous model's artifacts: the flat site-content collection and
-// the per-locale `<base>-<locale>` pages (superseded by one page per base).
+// Remove previous models' artifacts: the flat site-content collection, the
+// site-images collection (images now live as page blocks), and the per-locale
+// `<base>-<locale>` pages.
 async function deleteLegacy(token: string) {
-    const sc = await api("GET", "/collections/slug/site-content", token);
-    if (sc.status === 200) {
-        await api("DELETE", `/collections/${sc.json.id}`, token);
-        console.log("  removed obsolete 'site-content' collection");
+    for (const slug of ["site-content", "site-images"]) {
+        const c = await api("GET", `/collections/slug/${slug}`, token);
+        if (c.status === 200) {
+            await api("DELETE", `/collections/${c.json.id}`, token);
+            console.log(`  removed obsolete '${slug}' collection`);
+        }
     }
     for (const base of PAGE_BASES) {
         for (const locale of LOCALES) {
@@ -444,7 +455,6 @@ async function run() {
     await seedPages(token, messagesByLocale);
     console.log("Collections:");
     await seedCollections(token, messagesByLocale);
-    await seedImages(token);
     console.log("Done.");
 }
 

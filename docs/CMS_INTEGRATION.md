@@ -25,8 +25,13 @@ the CMS returns already-resolved content (default-locale fallback).
 - **Collections** hold the genuinely dynamic lists — `news-articles`,
   `news-events`, `careers-jobs` — one row per item; text fields are localized,
   `key`/`image` are shared. Add/remove items from the dashboard.
-- **`site-images`** holds fixed chrome/hero/client images (`key → image`),
-  locale-agnostic.
+- **Images** are page/collection content backed by the **Media Library**: each
+  page has a "Media" section of Shared image blocks (`images.<key>`) whose value
+  is a Media Library URL (`/api/media/:id/raw`). The read layer routes
+  `images.<key>` into `tree.images[key]`, which `resolveImage()` reads; empty →
+  the site's bundled `/public/images` fallback. Upload once in the dashboard
+  (Media) and pick from any image field; per-article/event images live on their
+  collection row's `image` field.
 
 The single source of truth for this layout is [`src/lib/cms-schema.ts`](../src/lib/cms-schema.ts),
 imported by both the read layer ([`src/lib/cms.ts`](../src/lib/cms.ts), which

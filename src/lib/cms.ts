@@ -8,19 +8,15 @@
  *  - **Pages** `<base>-<locale>` (see `cms-schema.ts` PAGE_BASES): every content
  *    block's `id` is its message key; text blocks carry a `value`, `list` blocks
  *    carry an `items` array. Walked into the tree by dot-path.
- *  - **Collections** (news/events/jobs): rebuilt into arrays under their message
- *    path, picking each row's `<field>_<locale>` column.
- *  - **site-images**: `{ key -> image }`, exposed as `tree.images` and read by
- *    `src/lib/images.ts`.
+ *  - **Collections** (news/events/jobs): the CMS resolves each per `?locale=`,
+ *    so rows come back already localized (plain field names).
+ *  - **Images**: image blocks on pages have id `images.<key>` and a value that
+ *    is a Media Library URL, so they land at `tree.images[<key>]` via the same
+ *    block walk — read by `src/lib/images.ts`. Empty → local fallback.
  *
  * The CMS is fetched server-side only (inside next-intl's request config).
  */
-import {
-    COLLECTIONS,
-    IMAGE_KEYS,
-    PAGE_BASES,
-    SITE_IMAGES_SLUG,
-} from "./cms-schema";
+import { COLLECTIONS, PAGE_BASES } from "./cms-schema";
 
 const CMS_API_URL = (process.env.CMS_API_URL ?? "http://localhost:3000/api").replace(
     /\/+$/,
@@ -118,16 +114,17 @@ function nonEmptyString(value: unknown): string | null {
  * nothing at all (so the site runs entirely on local copy).
  */
 export async function fetchCmsSiteContent(locale: string): Promise<Json | null> {
-    const [pageBlockLists, imageRows, ...collectionRowLists] = await Promise.all([
+    const [pageBlockLists, ...collectionRowLists] = await Promise.all([
         Promise.all(PAGE_BASES.map((base) => fetchPageBlocks(base, locale))),
-        fetchCollectionRows(SITE_IMAGES_SLUG, locale),
         ...COLLECTIONS.map((c) => fetchCollectionRows(c.slug, locale)),
     ]);
 
     const tree: Json = {};
     let gotAnything = false;
 
-    // Pages → tree. Text block: id -> value. List block: id -> items array.
+    // Pages → tree. Text block: id -> value (image blocks are text blocks whose
+    // id is `images.<key>` and value a Media URL, so they land at
+    // tree.images[<key>]). List block: id -> items array.
     for (const blocks of pageBlockLists) {
         if (!blocks) continue;
         for (const block of blocks) {
@@ -145,20 +142,6 @@ export async function fetchCmsSiteContent(locale: string): Promise<Json | null> 
                     gotAnything = true;
                 }
             }
-        }
-    }
-
-    // Images → tree.images (key -> image), only non-empty.
-    if (imageRows) {
-        const images: Record<string, string> = {};
-        for (const row of imageRows) {
-            const key = nonEmptyString(row.key);
-            const img = nonEmptyString(row.image);
-            if (key && IMAGE_KEYS.includes(key) && img) images[key] = img;
-        }
-        if (Object.keys(images).length) {
-            tree.images = images;
-            gotAnything = true;
         }
     }
 
