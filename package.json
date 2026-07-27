@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 3002",
     "lint": "eslint",
-    "seed:cms": "tsx scripts/seed-cms.ts"
+    "seed:cms": "tsx scripts/build-manifest.ts && node scripts/send-manifest.mjs",
+    "build:manifest": "tsx scripts/build-manifest.ts"
   },
   "dependencies": {
     "lucide-react": "^1.23.0",
