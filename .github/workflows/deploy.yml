@@ -1,0 +1,45 @@
+name: Deploy
+
+# Pushes to main rebuild and restart the site on the production server.
+# Content is NOT reseeded: the CMS owns it once seeded, and re-running the
+# seed would only add missing documents anyway (it never overwrites).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-quality
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and restart on server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd ${{ secrets.PROJECT_PATH }}
+            git fetch --all
+            git reset --hard origin/main
+            npm ci --no-audit --no-fund
+            npm run build
+            pm2 startOrReload ecosystem.config.js --update-env
+            pm2 save
+            # Fail the job if the site does not answer after restarting.
+            for i in $(seq 1 15); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3003/en || true)
+              [ "$code" = "200" ] && echo "healthy" && exit 0
+              sleep 2
+            done
+            echo "site did not become healthy" >&2
+            pm2 logs quality-web --lines 40 --nostream || true
+            exit 1
