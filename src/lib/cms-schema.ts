@@ -1,7 +1,7 @@
 /**
  * Shared description of how this site's content is laid out in the MOHTAWA CMS.
  * Imported by BOTH the read layer (`src/lib/cms.ts`) and the write layer
- * (`scripts/seed-cms.ts`) so the two can never drift.
+ * (`scripts/build-manifest.ts`) so the two can never drift.
  *
  * Model:
  *  - Each top-level messages namespace that is a *page* becomes one CMS **Page

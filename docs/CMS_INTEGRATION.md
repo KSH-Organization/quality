@@ -35,8 +35,8 @@ the CMS returns already-resolved content (default-locale fallback).
 
 The single source of truth for this layout is [`src/lib/cms-schema.ts`](../src/lib/cms-schema.ts),
 imported by both the read layer ([`src/lib/cms.ts`](../src/lib/cms.ts), which
-fetches `?locale=<locale>`) and the seed
-([`scripts/seed-cms.ts`](../scripts/seed-cms.ts)).
+fetches `?locale=<locale>`) and the manifest builder
+([`scripts/build-manifest.ts`](../scripts/build-manifest.ts)).
 
 ## Run the seed
 
@@ -47,8 +47,12 @@ CMS_ADMIN_PASSWORD=Admin12345! \
 npm run seed:cms
 ```
 
-Creates/publishes the Pages and Collections above from `messages/*.json`. Safe to
-re-run: existing Pages are left untouched; collections/images upsert by key.
+Two steps behind one command: `build-manifest.ts` generates
+`kshc.manifest.json` from `messages/*.json` (using the schema above), then
+`send-manifest.mjs` POSTs it to the CMS's `/api/seed`, which does the actual
+creating. Safe to re-run: existing Pages are left untouched; collection rows
+upsert by `key`. Image blocks seed empty — upload in the dashboard's Media
+Library; until then the site uses its bundled `/public/images` fallback.
 
 ## Adding a language
 
