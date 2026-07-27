@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SmartImage from "@/components/smart-image";
+import RowIcon from "@/components/row-icon";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import {
   Truck,
@@ -51,9 +52,11 @@ const CLIENT_IMAGES: Record<string, { src: string; w: number; h: number }> = {
   samil: { src: "/images/client-samil.png", w: 329, h: 198 },
 };
 
-type CapabilityRow = { key: string; title: string };
-type ClientRow = { key: string; name: string };
-type StatRow = { key: string; value: string; label: string };
+// `icon`/`image` are optional per-row media the admin uploads in the CMS;
+// empty falls back to the Lucide icon / bundled logo below.
+type CapabilityRow = { key: string; title: string; icon?: string };
+type ClientRow = { key: string; name: string; image?: string };
+type StatRow = { key: string; value: string; label: string; icon?: string };
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -142,15 +145,19 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             stagger
             className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2"
           >
-            {capabilities.map(({ key, title }) => {
-              const Icon = CAPABILITY_ICONS[key] ?? Shield;
+            {capabilities.map(({ key, title, icon }) => {
               return (
                 <article
                   key={key}
                   className="group flex flex-col items-start gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="size-6 text-white" aria-hidden />
+                    <RowIcon
+                      src={icon}
+                      fallback={CAPABILITY_ICONS[key] ?? Shield}
+                      className="size-6 text-white"
+                      alt={title}
+                    />
                   </div>
                   <h3 className="text-2xl font-bold text-ink">{title}</h3>
                   <Link
@@ -181,12 +188,14 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             stagger
             className="mt-34 flex flex-wrap items-center justify-center gap-12 lg:justify-between"
           >
-            {clients.map(({ key, name }) => {
+            {clients.map(({ key, name, image }) => {
               const img = CLIENT_IMAGES[key] ?? { src: "", w: 200, h: 80 };
               return (
                 <SmartImage
                   key={key}
-                  src={resolveImage(images, `client-${key}`, img.src)}
+                  // The logo now lives on the client's own row, so an editor
+                  // sets it next to that client's name.
+                  src={image?.trim() ? image : img.src}
                   alt={name}
                   width={img.w}
                   height={img.h}
@@ -223,15 +232,19 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             stagger
             className="grid w-full flex-1 grid-cols-1 gap-6 sm:grid-cols-3"
           >
-            {stats.map(({ key, value, label }) => {
-              const Icon = STAT_ICONS[key] ?? Zap;
+            {stats.map(({ key, value, label, icon }) => {
               return (
                 <div
                   key={key}
                   className="flex flex-col gap-4 rounded-2xl border border-line-dark bg-brand p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex size-12 items-center justify-center rounded-3xl bg-accent shadow-lg shadow-accent/20">
-                    <Icon className="size-6 text-brand" aria-hidden />
+                    <RowIcon
+                      src={icon}
+                      fallback={STAT_ICONS[key] ?? Zap}
+                      className="size-6 text-brand"
+                      alt={label}
+                    />
                   </div>
                   <div>
                     <p className="text-[32px] font-extrabold text-white">

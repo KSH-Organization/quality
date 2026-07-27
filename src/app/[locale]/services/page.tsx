@@ -18,6 +18,7 @@ import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import SectionHeader from "@/components/section-header";
 import Reveal from "@/components/reveal";
+import RowIcon from "@/components/row-icon";
 import { resolveImage } from "@/lib/images";
 
 export async function generateMetadata({
@@ -37,7 +38,7 @@ const SERVICE_ICONS: Record<string, LucideIcon> = {
   quality: Shield,
 };
 
-type ServiceRow = { key: string; title: string; body: string };
+type ServiceRow = { key: string; title: string; body: string; icon?: string };
 
 export default async function ServicesPage({
   params,
@@ -94,15 +95,19 @@ export default async function ServicesPage({
             stagger
             className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2"
           >
-            {items.map(({ key, title, body }) => {
-              const Icon = SERVICE_ICONS[key] ?? Shield;
+            {items.map(({ key, title, body, icon }) => {
               return (
                 <article
                   key={key}
                   className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex size-12 items-center justify-center rounded-xl bg-brand transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="size-6 text-accent" aria-hidden />
+                    <RowIcon
+                      src={icon}
+                      fallback={SERVICE_ICONS[key] ?? Shield}
+                      className="size-6 text-accent"
+                      alt={title}
+                    />
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-ink">{title}</h2>

@@ -17,6 +17,7 @@ import {
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import Reveal from "@/components/reveal";
+import RowIcon from "@/components/row-icon";
 import { resolveImage } from "@/lib/images";
 
 export async function generateMetadata({
@@ -37,7 +38,7 @@ const OBJECTIVE_ICONS: Record<string, LucideIcon> = {
 };
 
 type StatRow = { key: string; label: string; value: string };
-type ObjectiveRow = { key: string; title: string; body: string };
+type ObjectiveRow = { key: string; title: string; body: string; icon?: string };
 
 export default async function AboutPage({
   params,
@@ -195,15 +196,19 @@ export default async function AboutPage({
             stagger
             className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
           >
-            {objectives.map(({ key, title, body }) => {
-              const Icon = OBJECTIVE_ICONS[key] ?? Lightbulb;
+            {objectives.map(({ key, title, body, icon }) => {
               return (
                 <article
                   key={key}
                   className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex size-12 items-center justify-center rounded-full bg-accent transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="size-6 " aria-hidden />
+                    <RowIcon
+                      src={icon}
+                      fallback={OBJECTIVE_ICONS[key] ?? Lightbulb}
+                      className="size-6"
+                      alt={title}
+                    />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-ink">{title}</h3>

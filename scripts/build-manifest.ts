@@ -20,6 +20,7 @@ import {
     COLLECTION_PATHS,
     IMAGE_BLOCKS,
     PAGE_BASES,
+    ROW_MEDIA,
 } from "../src/lib/cms-schema";
 
 type Json = Record<string, unknown>;
@@ -59,7 +60,9 @@ function titleCase(key: string): string {
 }
 
 function fieldType(id: string): string {
-    if (id === "image" || id === "logo") return "image";
+    // `icon` is an image field too — an uploaded icon overrides the
+    // component's built-in Lucide fallback for that row's key.
+    if (id === "image" || id === "logo" || id === "icon") return "image";
     if (id === "body") return "longtext";
     return "text";
 }
@@ -82,12 +85,14 @@ type Block = {
 };
 type Section = { title: string; blocks: Block[] };
 
-const deriveFields = (rows: Json[]) =>
-    Object.keys(rows[0] ?? {}).map((id) => ({
-        id,
-        type: fieldType(id),
-        label: titleCase(id),
-    }));
+const deriveFields = (rows: Json[], blockId?: string) => {
+    const ids = Object.keys(rows[0] ?? {});
+    // Media columns declared for this list get appended, so each row carries
+    // its own image/icon right next to that row's text.
+    for (const extra of (blockId && ROW_MEDIA[blockId]) || [])
+        if (!ids.includes(extra)) ids.push(extra);
+    return ids.map((id) => ({ id, type: fieldType(id), label: titleCase(id) }));
+};
 
 const textBlock = (id: string, key: string, value: string): Block => ({
     id,
@@ -96,13 +101,23 @@ const textBlock = (id: string, key: string, value: string): Block => ({
     value,
 });
 
-const listBlock = (id: string, key: string, rows: Json[]): Block => ({
-    id,
-    type: "list",
-    label: titleCase(key),
-    fields: deriveFields(rows),
-    items: rows,
-});
+const listBlock = (id: string, key: string, rows: Json[]): Block => {
+    const media = ROW_MEDIA[id] ?? [];
+    return {
+        id,
+        type: "list",
+        label: titleCase(key),
+        fields: deriveFields(rows, id),
+        // Seed each row's media empty: the admin picks per row in the editor,
+        // and the site falls back to its bundled asset / Lucide icon meanwhile.
+        items: media.length
+            ? rows.map((r) => ({
+                ...r,
+                ...Object.fromEntries(media.map((m) => [m, ""])),
+            }))
+            : rows,
+    };
+};
 
 function buildBlocks(prefix: string, obj: Json): Block[] {
     const blocks: Block[] = [];
@@ -116,20 +131,33 @@ function buildBlocks(prefix: string, obj: Json): Block[] {
     return blocks;
 }
 
-/** Fixed chrome/hero images: Shared, empty → the admin uploads in the CMS. */
-function imageSection(base: string): Section | null {
-    const keys = IMAGE_BLOCKS[base] ?? [];
-    if (!keys.length) return null;
-    return {
-        title: "Media",
-        blocks: keys.map((key) => ({
-            id: `images.${key}`,
-            type: "image",
-            label: titleCase(key),
-            value: "",
-            localized: false,
-        })),
-    };
+/** Image blocks for one section of a page: Shared, empty → admin uploads. */
+function imageBlocksFor(base: string, sectionTitle: string): Block[] {
+    const keys = IMAGE_BLOCKS[base]?.[sectionTitle] ?? [];
+    return keys.map((key) => ({
+        id: `images.${key}`,
+        type: "image",
+        label: titleCase(key),
+        value: "",
+        localized: false,
+    }));
+}
+
+/** Section titles a page declares images for but that its copy didn't create. */
+function orphanImageSections(base: string, existing: Section[]): Section[] {
+    const have = new Set(existing.map((s) => s.title));
+    return Object.entries(IMAGE_BLOCKS[base] ?? {})
+        .filter(([title]) => !have.has(title))
+        .map(([title, keys]) => ({
+            title,
+            blocks: keys.map((key) => ({
+                id: `images.${key}`,
+                type: "image",
+                label: titleCase(key),
+                value: "",
+                localized: false,
+            })),
+        }));
 }
 
 function buildPageSections(base: string, msgs: Json): Section[] {
@@ -145,6 +173,8 @@ function buildPageSections(base: string, msgs: Json): Section[] {
                 title: "Site meta",
                 blocks: [textBlock("meta.siteName", "siteName", meta.siteName)],
             });
+        for (const section of sections)
+            section.blocks.push(...imageBlocksFor("globals", section.title));
         return sections;
     }
 
@@ -165,6 +195,11 @@ function buildPageSections(base: string, msgs: Json): Section[] {
     const metaFor = (msgs.meta as Json | undefined)?.[base];
     if (isPlainObject(metaFor))
         sections.push({ title: "SEO", blocks: buildBlocks(`meta.${base}`, metaFor) });
+
+    // Merge each section's images in with the copy they illustrate, instead of
+    // collecting every image on the page into one "Media" section.
+    for (const section of sections)
+        section.blocks.push(...imageBlocksFor(base, section.title));
 
     return sections.filter((s) => s.blocks.length > 0);
 }
@@ -197,11 +232,10 @@ const pages = PAGE_BASES.map((base) => {
             if (Object.keys(i18n).length) block.i18n = i18n;
         }
 
-    const media = imageSection(base);
     return {
         slug: base,
         title: titleCase(base),
-        sections: [...sections, ...(media ? [media] : [])],
+        sections: [...sections, ...orphanImageSections(base, sections)],
     };
 });
 

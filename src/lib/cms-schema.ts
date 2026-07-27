@@ -70,23 +70,46 @@ export const COLLECTIONS: CollectionDef[] = [
 // blocks so they aren't duplicated as page content.
 export const COLLECTION_PATHS = COLLECTIONS.map((c) => c.path);
 
-// Fixed chrome/hero/client images now live as image blocks ON their page (a
-// "Media" section), backed by the CMS Media Library. Each block's id is
-// `images.<key>`, so the read layer's setPath routes it straight into
-// tree.images[<key>] — the same map resolveImage() already reads, so the
-// components need no changes. Blocks are Shared (one value across locales) and
-// start empty (the site falls back to its bundled /public/images asset).
-// Per-article/event images live on their own collection rows (the `image`
-// flatField above).
-export const IMAGE_BLOCKS: Record<string, string[]> = {
-    globals: ["logo"],
-    home: ["hero-home", "client-bank", "client-zain", "client-samil"],
-    about: [
-        "hero-about",
-        "about-illustration",
-        "about-vision",
-        "about-mission",
-    ],
-    services: ["hero-services"],
-    careers: ["hero-careers"],
+// Where each image block belongs, keyed by page base → the SECTION it sits in.
+// Placing an image next to the copy it illustrates (rather than in one shared
+// "Media" bucket) is what makes it obvious which image an editor is changing —
+// `hero-about` sits in About's Hero section, not in a list of eight images.
+//
+// The block id stays `images.<key>`, so the read layer's setPath still routes
+// it to tree.images[<key>] and `resolveImage()` needs no change. Blocks are
+// Shared (one value across locales) and start empty, so the site falls back to
+// its bundled /public/images asset until an admin uploads one.
+//
+// Per-row images/icons are NOT here — they live on their own list row or
+// collection row (see ROW_MEDIA and the collections' flatFields), so each item
+// carries its own picture instead of the editor guessing which of N images in
+// a Media section maps to which item.
+export const IMAGE_BLOCKS: Record<string, Record<string, string[]>> = {
+    globals: { Navigation: ["logo"] },
+    home: { Hero: ["hero-home"] },
+    about: {
+        Hero: ["hero-about"],
+        General: ["about-illustration"],
+        Vision: ["about-vision"],
+        Mission: ["about-mission"],
+    },
+    services: { General: ["hero-services"] },
+    careers: { General: ["hero-careers"] },
+};
+
+/**
+ * List blocks whose ROWS carry their own media, so each item's image/icon is
+ * edited inline with that item's text. Keyed by the block's dot-path id.
+ *
+ * `image` — a picture for that row (client logos, etc.)
+ * `icon`  — an uploaded icon; empty falls back to the component's built-in
+ *           Lucide icon for that row's `key`, so the site never loses icons.
+ */
+export const ROW_MEDIA: Record<string, ("image" | "icon")[]> = {
+    "home.capabilities.items": ["icon"], // CAPABILITY_ICONS
+    "home.edge.stats": ["icon"], // STAT_ICONS
+    "home.clients.items": ["image"], // CLIENT_LOGOS (real logos, not icons)
+    "about.objectives.items": ["icon"], // OBJECTIVE_ICONS
+    "departments.items": ["icon"], // DEPARTMENT_ICONS
+    "services.items": ["icon"], // SERVICE_ICONS
 };

@@ -14,6 +14,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { buildPageMetadata } from "@/lib/seo";
 import Reveal from "@/components/reveal";
+import RowIcon from "@/components/row-icon";
 
 export async function generateMetadata({
   params,
@@ -34,7 +35,7 @@ const DEPARTMENT_ICONS: Record<string, LucideIcon> = {
   qa: ShieldCheck,
 };
 
-type DepartmentRow = { key: string; title: string; body: string };
+type DepartmentRow = { key: string; title: string; body: string; icon?: string };
 
 export default async function DepartmentsPage({
   params,
@@ -79,15 +80,19 @@ export default async function DepartmentsPage({
             stagger
             className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
           >
-            {gridItems.map(({ key, title, body }) => {
-              const Icon = DEPARTMENT_ICONS[key] ?? ShieldCheck;
+            {gridItems.map(({ key, title, body, icon }) => {
               return (
                 <article
                   key={key}
                   className="group flex flex-col gap-6 rounded-2xl border border-line bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex size-14 items-center justify-center rounded-xl bg-[rgba(255,_184,_0,_0.10)] transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="size-7 text-accent" aria-hidden />
+                    <RowIcon
+                      src={icon}
+                      fallback={DEPARTMENT_ICONS[key] ?? ShieldCheck}
+                      className="size-7 text-accent"
+                      alt={title}
+                    />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-ink">{title}</h3>

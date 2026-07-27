@@ -10,9 +10,14 @@
  *    carry an `items` array. Walked into the tree by dot-path.
  *  - **Collections** (news/events/jobs): the CMS resolves each per `?locale=`,
  *    so rows come back already localized (plain field names).
- *  - **Images**: image blocks on pages have id `images.<key>` and a value that
- *    is a Media Library URL, so they land at `tree.images[<key>]` via the same
- *    block walk — read by `src/lib/images.ts`. Empty → local fallback.
+ *  - **Images**: page-level image blocks have id `images.<key>` and a Media
+ *    Library URL value, so they land at `tree.images[<key>]` via the same block
+ *    walk — read by `src/lib/images.ts`. They sit in the section whose copy they
+ *    illustrate, not in one shared bucket.
+ *  - **Per-row media**: an item's own `image`/`icon` is a column on its list or
+ *    collection row, so it travels with that item's text (see ROW_MEDIA). An
+ *    empty `icon` falls back to the component's built-in Lucide icon for that
+ *    row's `key`; an empty `image` falls back to the bundled asset.
  *
  * The CMS is fetched server-side only (inside next-intl's request config).
  */
