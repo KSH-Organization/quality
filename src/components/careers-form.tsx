@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, Paperclip, CheckCircle2 } from "lucide-react";
+import { ChevronDown, Paperclip, CheckCircle2, Loader2 } from "lucide-react";
+import { submitEntry } from "@/lib/submit";
 
 type JobRow = { key: string; title: string };
 
@@ -10,10 +11,32 @@ export default function CareersForm() {
   const t = useTranslations("careers.form");
   const jobs = t.raw("jobs") as JobRow[];
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    if (sending) return;
+    const form = event.currentTarget;
+    const raw = new FormData(form);
+    // The CV input is a File; submissions are JSON, so send the filename and
+    // let the applicant's portfolio/LinkedIn URL carry the actual document.
+    const file = raw.get("cv");
+    const data: Record<string, unknown> = Object.fromEntries(
+      [...raw.entries()].filter(([, v]) => typeof v === "string"),
+    );
+    if (file instanceof File && file.name) data.cv = file.name;
+
+    setSending(true);
+    setError(null);
+    const result = await submitEntry("job-applications", data);
+    setSending(false);
+    if (result.ok) {
+      setSubmitted(true);
+      form.reset();
+    } else {
+      setError(result.error);
+    }
   }
 
   if (submitted) {
@@ -127,12 +150,20 @@ export default function CareersForm() {
         />
       </div>
 
-      <div className="flex justify-end sm:col-span-2">
+      <div className="flex flex-col items-end gap-3 sm:col-span-2">
+        {error && (
+          <p className="text-sm font-semibold text-red-300" role="alert">
+            {error}
+          </p>
+        )}
         <button
           type="submit"
-          className="rounded-lg bg-accent px-10 py-3.5 text-base font-bold text-white transition-opacity hover:opacity-90"
+          disabled={sending}
+          aria-busy={sending}
+          className="flex items-center justify-center gap-2 rounded-lg bg-accent px-10 py-3.5 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {t("submit")}
+          {sending && <Loader2 className="size-4 animate-spin" aria-hidden />}
         </button>
       </div>
     </form>
