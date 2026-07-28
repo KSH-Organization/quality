@@ -1,4 +1,5 @@
 import Image, { type ImageProps } from "next/image";
+import { assetUrl } from "@/lib/asset-url";
 
 type SmartImageProps = Omit<ImageProps, "src"> & { src: string };
 
@@ -11,6 +12,11 @@ type SmartImageProps = Omit<ImageProps, "src"> & { src: string };
  * end up being a data URI at runtime, so this wrapper drops to a plain
  * <img> for that case and keeps next/image's optimization for everything
  * else (the bundled local fallbacks, or CMS values that are real URLs).
+ *
+ * Bundled sources are also fingerprinted here (`?v=<content-hash>`), so an
+ * image replaced in public/images gets a new URL and shows up immediately
+ * rather than being served from the optimiser's cache. This catches the paths
+ * that don't go through resolveImage(), e.g. client logos and news images.
  */
 export default function SmartImage({
   src,
@@ -49,7 +55,7 @@ export default function SmartImage({
 
   return (
     <Image
-      src={src}
+      src={assetUrl(src)}
       alt={alt}
       fill={fill}
       width={width}
